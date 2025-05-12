@@ -22,8 +22,14 @@ import {
   ReceiptText,
   ChevronDown,
   ChevronRight,
-  Home
+  Home,
+  HelpCircle,
+  UserPlus,
+  HeartHandshake,
+  Phone,
+  KeySquare
 } from 'lucide-react';
+import { colorPalette } from '../../types/auth.types';
 
 interface SidebarItemProps {
   to: string;
@@ -52,10 +58,13 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, end = false 
         cn(
           "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
           isActive
-            ? "bg-csp-blue text-white"
-            : "text-gray-700 hover:bg-gray-100"
+            ? "text-white" // Active state
+            : "text-gray-700 hover:bg-opacity-10 hover:bg-gray-100"
         )
       }
+      style={({ isActive }) => ({
+        backgroundColor: isActive ? colorPalette.primaryPurple : 'transparent',
+      })}
     >
       <span className="flex h-5 w-5 items-center justify-center">{icon}</span>
       <span>{label}</span>
@@ -66,7 +75,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, end = false 
 const Sidebar: React.FC = () => {
   const { authState, isAuthorized } = useAuth();
   const { user } = authState;
-  const [expandedSections, setExpandedSections] = useState<string[]>(['dashboard']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['public', 'dashboard']);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => 
@@ -79,7 +88,7 @@ const Sidebar: React.FC = () => {
   // Define menu sections based on user role
   const menuSections: MenuSection[] = [
     {
-      title: 'Public',
+      title: 'Public Website',
       items: [
         {
           to: '/',
@@ -87,6 +96,42 @@ const Sidebar: React.FC = () => {
           label: 'Home',
           roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
           end: true
+        },
+        {
+          to: '/how-it-works',
+          icon: <HelpCircle size={18} />,
+          label: 'How It Works',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/become-csp',
+          icon: <UserPlus size={18} />,
+          label: 'Become a CSP',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/customer-corner',
+          icon: <MessageSquare size={18} />,
+          label: 'Customer Corner',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/csr-impact',
+          icon: <HeartHandshake size={18} />,
+          label: 'CSR Impact',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/contact',
+          icon: <Phone size={18} />,
+          label: 'Contact/Helpline',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/login',
+          icon: <KeySquare size={18} />,
+          label: 'Login',
+          roles: ['guest'],
         }
       ]
     },
@@ -321,8 +366,9 @@ const Sidebar: React.FC = () => {
         return (
           <div key={section.title} className="flex flex-col gap-1">
             <button
-              className="flex items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500"
+              className="flex items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider"
               onClick={() => toggleSection(section.title.toLowerCase())}
+              style={{ color: colorPalette.primaryPurple }}
             >
               <span>{section.title}</span>
               {isExpanded ? (

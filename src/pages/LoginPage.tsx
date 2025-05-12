@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { colorPalette } from '../types/auth.types';
 
 interface DemoUser {
   role: UserRole;
@@ -74,20 +75,25 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-csp-navy to-csp-blue p-4">
+    <div 
+      className="flex min-h-screen flex-col items-center justify-center p-4"
+      style={{ 
+        background: `linear-gradient(to bottom, ${colorPalette.primaryPurple}, ${colorPalette.accentGreen})`
+      }}
+    >
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
           <div className="flex items-center gap-3">
             <Shield className="h-12 w-12 text-white" />
-            <h1 className="text-3xl font-bold text-white">CSP Management</h1>
+            <h1 className="text-3xl font-bold text-white">Bank Correspondent Portal</h1>
           </div>
         </div>
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center text-2xl">Login</CardTitle>
+            <CardTitle className="text-center text-2xl" style={{ color: colorPalette.primaryPurple }}>Login</CardTitle>
             <CardDescription className="text-center">
-              Access the CSP Management Platform
+              Access the Bank Correspondent Portal
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -116,14 +122,15 @@ const LoginPage: React.FC = () => {
               </div>
 
               {error && (
-                <Alert variant="destructive">
+                <Alert variant="destructive" style={{ backgroundColor: `${colorPalette.alertRed}20`, borderColor: colorPalette.alertRed }}>
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <Button
                 type="submit"
-                className="w-full bg-csp-blue hover:bg-csp-steel"
+                className="w-full text-white"
+                style={{ backgroundColor: colorPalette.primaryPurple }}
                 disabled={isLoading}
               >
                 {isLoading ? 'Logging in...' : 'Login'}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -5,8 +6,8 @@ import {
   Bell, 
   LogOut, 
   Menu, 
-  Shield, 
-  User 
+  User,
+  Shield
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useLocation } from 'react-router-dom';
+import { colorPalette } from '../../types/auth.types';
 
 const roleLabels: Record<string, string> = {
   admin: 'Administrator',
@@ -72,25 +74,25 @@ const Header: React.FC = () => {
             className="block md:hidden"
             aria-label="Toggle menu"
           >
-            <Menu className="h-6 w-6 text-csp-navy" />
+            <Menu className="h-6 w-6" style={{ color: colorPalette.primaryPurple }} />
           </button>
           
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-csp-blue" />
-            <span className="hidden text-xl font-bold text-csp-navy sm:inline-block">
-              CSP Management
+            <Shield className="h-8 w-8" style={{ color: colorPalette.primaryPurple }} />
+            <span className="hidden text-xl font-bold sm:inline-block" style={{ color: colorPalette.primaryPurple }}>
+              Bank Correspondent Portal
             </span>
           </div>
           
           {isWarModeActive && (
-            <Badge variant="destructive" className="animate-pulse-slow">
+            <Badge variant="destructive" className="animate-pulse-slow" style={{ backgroundColor: colorPalette.alertRed }}>
               War Mode Active
             </Badge>
           )}
         </div>
 
         {/* Page title - visible on medium screens and above */}
-        <h1 className="hidden text-xl font-semibold text-csp-navy md:block">
+        <h1 className="hidden text-xl font-semibold md:block" style={{ color: colorPalette.primaryPurple }}>
           {getPageTitle()}
         </h1>
 
@@ -101,7 +103,8 @@ const Header: React.FC = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-csp-warning text-[10px] font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                     style={{ backgroundColor: colorPalette.accentGreen }}>
                   3
                 </span>
               </Button>
@@ -129,7 +132,7 @@ const Header: React.FC = () => {
                 </DropdownMenuItem>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-center text-sm font-medium text-csp-accent">
+              <DropdownMenuItem className="text-center text-sm font-medium" style={{ color: colorPalette.accentGreen }}>
                 View all notifications
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -141,7 +144,7 @@ const Header: React.FC = () => {
               <Button variant="ghost" className="flex items-center gap-2 px-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user?.avatar} />
-                  <AvatarFallback className="bg-csp-steel text-white">
+                  <AvatarFallback style={{ backgroundColor: colorPalette.primaryPurple, color: colorPalette.baseWhite }}>
                     {user?.name.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
@@ -162,8 +165,9 @@ const Header: React.FC = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                className="flex cursor-pointer items-center gap-2 text-red-600" 
+                className="flex cursor-pointer items-center gap-2" 
                 onClick={logout}
+                style={{ color: colorPalette.alertRed }}
               >
                 <LogOut className="h-4 w-4" />
                 <span>Log out</span>

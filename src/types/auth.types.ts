@@ -27,3 +27,13 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 }
+
+// Color palette for the Bank Correspondent Portal
+export const colorPalette = {
+  primaryPurple: '#5D2E8C',
+  accentGreen: '#2D9B4F',
+  baseWhite: '#FFFFFF',
+  neutralGrayLight: '#F4F4F4',
+  neutralGrayDark: '#D1D1D1',
+  alertRed: '#FF4B4B'
+};
