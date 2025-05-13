@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { PostgrestQueryBuilder } from '@supabase/supabase-js';
 
 export function useSupabaseData<T>(
   tableName: string, 
@@ -23,10 +24,10 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Using type assertion to bypass TypeScript restrictions
-      let query = supabase
-        .from(tableName)
-        .select(options?.select || '*') as any;
+      // Using type assertion to handle dynamic table access
+      const supabaseQuery = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
+      
+      let query = supabaseQuery.select(options?.select || '*');
 
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
@@ -89,17 +90,19 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
+    // Using type assertions to handle dynamic table access
+    const supabaseTable = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
     let query: any;
     
     if (type === 'insert') {
-      query = supabase.from(tableName).insert(data) as any;
+      query = supabaseTable.insert(data);
     } else if (type === 'update') {
-      query = supabase.from(tableName).update(data) as any;
+      query = supabaseTable.update(data);
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }
     } else if (type === 'delete') {
-      query = supabase.from(tableName).delete() as any;
+      query = supabaseTable.delete();
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }

@@ -2,10 +2,12 @@
 import { ReactNode } from 'react';
 import { Column } from '@/components/shared/DataTable';
 
-/**
- * A helper function to create properly typed table columns
- * This helps avoid TypeScript errors when defining columns for DataTable
- */
-export function createColumns<T>(columns: Column<T>[]): Column<T>[] {
-  return columns;
+type ColumnDefinition<T> = {
+  header: string;
+  accessorKey: keyof T | ((data: T) => ReactNode);
+  cell?: (row: T) => ReactNode;
+};
+
+export function createColumns<T>(columnDefinitions: ColumnDefinition<T>[]): Column<T>[] {
+  return columnDefinitions as Column<T>[];
 }

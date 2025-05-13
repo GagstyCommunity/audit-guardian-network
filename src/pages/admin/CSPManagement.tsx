@@ -68,9 +68,9 @@ const CSPManagement: React.FC = () => {
                      action === 'suspend' ? 'suspended' : currentStatus;
                      
     try {
-      // Using type assertion to bypass TypeScript limitations for dynamic table names
+      // Using type assertion to handle dynamic table access
       const { error } = await (supabase
-        .from('csp_agents') as any)
+        .from('csp_agents') as unknown as any)
         .update({ status: newStatus })
         .eq('id', agentId);
         

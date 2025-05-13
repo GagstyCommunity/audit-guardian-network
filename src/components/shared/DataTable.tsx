@@ -54,8 +54,7 @@ export function DataTable<T>({ data, columns, loading = false, emptyMessage = 'N
                   {column.cell ? column.cell(row) : 
                     typeof column.accessorKey === 'function' 
                       ? column.accessorKey(row)
-                      // Use type assertion to handle the accessorKey safely
-                      : String(row[column.accessorKey as keyof T] ?? '')}
+                      : String((row[column.accessorKey as keyof T] as unknown) ?? '')}
                 </TableCell>
               ))}
             </TableRow>
