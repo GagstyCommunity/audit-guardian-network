@@ -1,233 +1,291 @@
 
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
+import { 
+  Card,
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription,
+  CardFooter
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import {
-  AlertCircle,
-  AlertTriangle,
-  ArrowUpRight,
-  BarChart3,
-  CheckCircle,
-  Clock,
-  MapPin,
-  Shield,
+import { StatsCard } from '@/components/shared/StatsCard';
+import { DataTable } from '@/components/shared/DataTable';
+import { StatusBadge } from '@/components/shared/StatusBadge';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
+import { 
+  AlertTriangle, 
+  ArrowRight, 
+  BarChart3, 
+  Clock, 
+  Shield, 
   Users,
-  FileText,
-  Settings,
-  Bell
+  Activity
 } from 'lucide-react';
+import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard: React.FC = () => {
-  const { authState } = useAuth();
-  const { user } = authState;
-
+  const navigate = useNavigate();
+  
+  const { data: cspAgents, loading: agentsLoading } = useSupabaseData('csp_agents', {
+    select: '*, profile:profiles(*)',
+    limit: 5,
+    orderBy: { column: 'risk_score', ascending: false }
+  });
+  
+  const { data: fraudAlerts, loading: alertsLoading } = useSupabaseData('fraud_alerts', {
+    select: '*',
+    limit: 5,
+    orderBy: { column: 'detected_at', ascending: false }
+  });
+  
+  const { data: audits, loading: auditsLoading } = useSupabaseData('audits', {
+    select: '*',
+    limit: 5,
+    orderBy: { column: 'scheduled_for', ascending: true }
+  });
+  
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'Not scheduled';
+    try {
+      return format(new Date(dateString), 'PP');
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
+  
+  // Columns for high risk agents
+  const agentColumns = [
+    {
+      header: 'Agent',
+      accessorKey: 'profile.name',
+      cell: (row: any) => (
+        <div>
+          <div className="font-medium">{row.profile?.name}</div>
+          <div className="text-sm text-muted-foreground">{row.bank_id}</div>
+        </div>
+      ),
+    },
+    {
+      header: 'Risk Score',
+      accessorKey: 'risk_score',
+      cell: (row: any) => (
+        <div className={`font-medium ${
+          row.risk_score > 0.7 ? 'text-destructive' : 
+          row.risk_score > 0.4 ? 'text-amber-500' : 
+          'text-green-600'
+        }`}>
+          {(row.risk_score * 100).toFixed(0)}%
+        </div>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      cell: (row: any) => (
+        <StatusBadge status={row.status} />
+      ),
+    },
+  ];
+  
+  // Columns for fraud alerts
+  const alertColumns = [
+    {
+      header: 'Alert Type',
+      accessorKey: 'alert_type',
+      cell: (row: any) => (
+        <div className="flex items-center">
+          <AlertTriangle className={`mr-2 h-4 w-4 ${
+            row.risk_level === 'critical' || row.risk_level === 'high' ? 'text-destructive' : 'text-amber-500'
+          }`} />
+          <span>{row.alert_type}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Risk Level',
+      accessorKey: 'risk_level',
+      cell: (row: any) => (
+        <StatusBadge status={row.risk_level} />
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      cell: (row: any) => (
+        <StatusBadge status={row.status} />
+      ),
+    },
+  ];
+  
+  // Columns for audits
+  const auditColumns = [
+    {
+      header: 'Scheduled For',
+      accessorKey: 'scheduled_for',
+      cell: (row: any) => (
+        <div className="flex items-center">
+          <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+          <span>{formatDate(row.scheduled_for)}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Priority',
+      accessorKey: 'priority',
+      cell: (row: any) => (
+        <StatusBadge 
+          status={row.priority === 1 ? 'high' : row.priority === 2 ? 'medium' : 'low'} 
+        />
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      cell: (row: any) => (
+        <StatusBadge status={row.status} />
+      ),
+    },
+  ];
+  
+  const totalActive = cspAgents.filter(agent => agent.status === 'active').length;
+  const totalSuspended = cspAgents.filter(agent => agent.status === 'suspended').length;
+  const openAlerts = fraudAlerts.filter(alert => alert.status === 'open').length;
+  const pendingAudits = audits.filter(audit => audit.status === 'pending').length;
+  
   return (
     <div className="space-y-6">
-      {/* Warning Alert */}
-      <Alert className="border-csp-warning bg-amber-50">
-        <AlertCircle className="h-4 w-4 text-csp-warning" />
-        <AlertTitle className="text-csp-warning">System Notice</AlertTitle>
-        <AlertDescription>
-          New fraud detection rules have been deployed. Please review the updated guidelines.
-        </AlertDescription>
-      </Alert>
-
-      {/* Stats Section */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Active CSPs</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">4,832</div>
-              <Badge className="bg-green-100 text-green-800">+24</Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Pending Audits</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">312</div>
-              <Badge className="bg-amber-100 text-amber-800">High</Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Fraud Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">68</div>
-              <Badge className="bg-red-100 text-red-800">Critical</Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">System Health</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">98%</div>
-              <Badge className="bg-green-100 text-green-800">Good</Badge>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Total CSP Agents"
+          value={`${totalActive}`}
+          description="Active agents"
+          icon={Users}
+          trend={{ value: 12, isPositive: true }}
+          isLoading={agentsLoading}
+        />
+        <StatsCard
+          title="Pending Audits"
+          value={`${pendingAudits}`}
+          description="Scheduled for this week"
+          icon={Clock}
+          isLoading={auditsLoading}
+        />
+        <StatsCard
+          title="Open Fraud Alerts"
+          value={`${openAlerts}`}
+          description="Requiring attention"
+          icon={AlertTriangle}
+          trend={{ value: 5, isPositive: false }}
+          isLoading={alertsLoading}
+        />
+        <StatsCard
+          title="System Status"
+          value={!alertsLoading && openAlerts > 3 ? "At Risk" : "Normal"}
+          description="All systems operational"
+          icon={Activity}
+          isLoading={alertsLoading}
+        />
       </div>
 
-      {/* Main Dashboard Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Real-time Fraud Map */}
-        <Card className="col-span-2 md:col-span-1 lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Real-time Fraud Map</CardTitle>
-              <Badge variant="outline">Live</Badge>
-            </div>
-            <CardDescription>Detected suspicious activities in the last 24 hours</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="aspect-video w-full overflow-hidden rounded-md bg-gray-100">
-              <div className="flex h-full w-full items-center justify-center">
-                <MapPin className="h-12 w-12 text-csp-steel opacity-50" />
-                <span className="ml-2 text-lg text-gray-400">Interactive Map View</span>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">24</span> high-risk alerts detected
-            </div>
-            <Button variant="ghost" size="sm">View Details</Button>
-          </CardFooter>
-        </Card>
-
-        {/* CSP Status */}
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>CSP Agent Status</CardTitle>
-            <CardDescription>Current agent activity</CardDescription>
+            <CardTitle>High Risk CSP Agents</CardTitle>
+            <CardDescription>Agents with elevated risk scores</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Active</span>
-                  <span className="font-medium">3,450</span>
-                </div>
-                <Progress value={72} className="h-2" />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Idle</span>
-                  <span className="font-medium">1,024</span>
-                </div>
-                <Progress value={21} className="h-2" />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Suspended</span>
-                  <span className="font-medium">358</span>
-                </div>
-                <Progress value={7} className="h-2 bg-red-100" />
-              </div>
-            </div>
+            <DataTable
+              data={cspAgents}
+              columns={agentColumns}
+              loading={agentsLoading}
+              emptyMessage="No high risk agents found"
+            />
           </CardContent>
-        </Card>
-
-        {/* Recent Audit Alerts */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Audit Alerts</CardTitle>
-            <CardDescription>Requiring immediate attention</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
-                  <AlertTriangle className="h-4 w-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="font-medium">Face Verification Failed</p>
-                  <p className="text-sm text-gray-500">CSP #245 in North District</p>
-                  <p className="text-xs text-gray-400">20 min ago</p>
-                </div>
-              </li>
-              
-              <li className="flex items-start gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100">
-                  <AlertCircle className="h-4 w-4 text-amber-600" />
-                </div>
-                <div>
-                  <p className="font-medium">GPS Location Mismatch</p>
-                  <p className="text-sm text-gray-500">CSP #108 in East District</p>
-                  <p className="text-xs text-gray-400">1 hour ago</p>
-                </div>
-              </li>
-              
-              <li className="flex items-start gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100">
-                  <Clock className="h-4 w-4 text-amber-600" />
-                </div>
-                <div>
-                  <p className="font-medium">Overdue Monthly Check-In</p>
-                  <p className="text-sm text-gray-500">12 CSPs in South District</p>
-                  <p className="text-xs text-gray-400">2 hours ago</p>
-                </div>
-              </li>
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline" size="sm" className="w-full">
-              View All Alerts
+          <CardFooter className="flex justify-end">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/admin/csp-management')}>
+              View All Agents
+              <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </CardFooter>
         </Card>
-
-        {/* Quick Access */}
-        <Card className="col-span-2 md:col-span-1 lg:col-span-3">
+        
+        <Card>
           <CardHeader>
-            <CardTitle>Quick Access</CardTitle>
+            <CardTitle>Recent Fraud Alerts</CardTitle>
+            <CardDescription>Newest detected system alerts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <Button variant="outline" className="flex h-24 flex-col items-center justify-center gap-2">
-                <Users className="h-6 w-6 text-csp-blue" />
-                <span>CSP Management</span>
-              </Button>
-              
-              <Button variant="outline" className="flex h-24 flex-col items-center justify-center gap-2">
-                <FileText className="h-6 w-6 text-csp-blue" />
-                <span>Audit Assignment</span>
-              </Button>
-              
-              <Button variant="outline" className="flex h-24 flex-col items-center justify-center gap-2">
-                <AlertTriangle className="h-6 w-6 text-csp-blue" />
-                <span>Fraud Engine</span>
-              </Button>
-              
-              <Button variant="outline" className="flex h-24 flex-col items-center justify-center gap-2">
-                <Bell className="h-6 w-6 text-csp-blue" />
-                <span>Notification Hub</span>
-              </Button>
-            </div>
+            <DataTable
+              data={fraudAlerts}
+              columns={alertColumns}
+              loading={alertsLoading}
+              emptyMessage="No recent fraud alerts"
+            />
           </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/admin/fraud-engine')}>
+              View All Alerts
+              <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </CardFooter>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Upcoming Audits</CardTitle>
+          <CardDescription>Scheduled audits that require attention</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            data={audits}
+            columns={auditColumns}
+            loading={auditsLoading}
+            emptyMessage="No upcoming audits"
+          />
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/admin/audit-assignment')}>
+            Manage Audits
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </Button>
+        </CardFooter>
+      </Card>
+      
+      <Card className="bg-slate-50">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Shield className="mr-2 h-5 w-5 text-blue-600" />
+            System Security Status
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-2xl font-bold">War Mode: {
+                !alertsLoading && openAlerts > 5 ? (
+                  <span className="text-destructive">Recommended</span>
+                ) : (
+                  <span className="text-green-600">Not Active</span>
+                )
+              }</div>
+              <p className="text-muted-foreground">
+                {!alertsLoading && openAlerts > 5
+                  ? "High number of security alerts detected. Consider activating War Mode."
+                  : "System operating under normal conditions."}
+              </p>
+            </div>
+            <Button 
+              variant={!alertsLoading && openAlerts > 5 ? "destructive" : "outline"}
+              onClick={() => navigate('/admin/war-mode')}
+            >
+              War Mode Controls
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
