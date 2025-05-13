@@ -9,5 +9,9 @@ type ColumnDefinition<T> = {
 };
 
 export function createColumns<T>(columnDefinitions: ColumnDefinition<T>[]): Column<T>[] {
-  return columnDefinitions as Column<T>[];
+  return columnDefinitions.map(def => ({
+    header: def.header,
+    accessorKey: def.accessorKey,
+    cell: def.cell
+  })) as Column<T>[];
 }

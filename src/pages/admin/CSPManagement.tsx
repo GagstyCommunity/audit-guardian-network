@@ -68,11 +68,11 @@ const CSPManagement: React.FC = () => {
                      action === 'suspend' ? 'suspended' : currentStatus;
                      
     try {
-      // Use type assertion for dynamic table access
-      const { error } = await (supabase
+      // Use type assertion with parentheses for dynamic table access
+      const { error } = await ((supabase
         .from('csp_agents') as any)
         .update({ status: newStatus })
-        .eq('id', agentId);
+        .eq('id', agentId));
         
       if (error) throw error;
       

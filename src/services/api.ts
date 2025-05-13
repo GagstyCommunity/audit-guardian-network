@@ -69,8 +69,8 @@ export const api = {
   // Query records
   async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
     try {
-      // Use type assertion for dynamic table access
-      const supabaseTable = supabase.from(table) as any;
+      // Use type assertion to bypass TypeScript's type checking for dynamic table access
+      const supabaseTable = (supabase.from(table) as any);
       let query = supabaseTable.select(select);
 
       if (column && value !== undefined) {

@@ -1,4 +1,3 @@
-
 /// <reference types="vite/client" />
 
 // Workaround to allow dynamic table access in Supabase client
@@ -57,6 +56,11 @@ interface Transaction {
   device_id?: string;
   location_lat?: number;
   location_long?: number;
+  account_number?: string;
+  reference_id?: string;
+  verified_at?: string;
+  agent_id?: string;
+  [key: string]: any; // Allow for additional dynamic properties
 }
 
 interface FaceVerification {
@@ -188,4 +192,3 @@ interface RedZone {
   created_at: string;
   expires_at?: string;
 }
-
