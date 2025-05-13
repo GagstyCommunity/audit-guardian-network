@@ -23,11 +23,10 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Using type assertion for the supabase client to bypass TypeScript restrictions
-      // since we're using dynamic table names that aren't known at compile time
-      let query = (supabase
-        .from(tableName) as any)
-        .select(options?.select || '*');
+      // Using type assertion to bypass TypeScript restrictions
+      let query = supabase
+        .from(tableName)
+        .select(options?.select || '*') as any;
 
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
@@ -68,6 +67,7 @@ export function useSupabaseData<T>(
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableName, options?.column, options?.value, options?.limit]);
 
   const refetch = () => {
@@ -89,17 +89,17 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    let query;
+    let query: any;
     
     if (type === 'insert') {
-      query = (supabase.from(tableName) as any).insert(data);
+      query = supabase.from(tableName).insert(data) as any;
     } else if (type === 'update') {
-      query = (supabase.from(tableName) as any).update(data);
+      query = supabase.from(tableName).update(data) as any;
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }
     } else if (type === 'delete') {
-      query = (supabase.from(tableName) as any).delete();
+      query = supabase.from(tableName).delete() as any;
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }

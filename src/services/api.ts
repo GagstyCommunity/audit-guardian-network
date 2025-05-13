@@ -69,9 +69,9 @@ export const api = {
   // Query records
   async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
     try {
-      let query = supabase
+      let query = (supabase
         .from(table)
-        .select(select);
+        .select(select)) as any;
 
       if (column && value !== undefined) {
         query = query.eq(column, value);

@@ -17,13 +17,13 @@ const FacialCheckIn: React.FC = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   
-  const { data: verifications, loading, refetch } = useSupabaseData('face_verifications', {
+  const { data: verifications, loading, refetch } = useSupabaseData<FaceVerification>('face_verifications', {
     select: '*',
     orderBy: { column: 'verified_at', ascending: false },
     limit: 10
   });
   
-  const { data: agents } = useSupabaseData('csp_agents', {
+  const { data: agents } = useSupabaseData<CSPAgent>('csp_agents', {
     column: 'profile_id', 
     value: authState.user?.id 
   });
@@ -112,7 +112,7 @@ const FacialCheckIn: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'N/A';
     try {
       return format(new Date(dateString), 'PP');
@@ -121,7 +121,7 @@ const FacialCheckIn: React.FC = () => {
     }
   };
 
-  const formatDateTime = (dateString: string) => {
+  const formatDateTime = (dateString: string | undefined) => {
     if (!dateString) return 'N/A';
     try {
       return format(new Date(dateString), 'PPp');
@@ -175,7 +175,9 @@ const FacialCheckIn: React.FC = () => {
                     <span>
                       Location:&nbsp;
                       <span className="font-medium">
-                        {currentAgent ? `${currentAgent.location_lat.toFixed(3)}, ${currentAgent.location_long.toFixed(3)}` : 'Unknown'}
+                        {currentAgent && currentAgent.location_lat && currentAgent.location_long 
+                          ? `${currentAgent.location_lat.toFixed(3)}, ${currentAgent.location_long.toFixed(3)}` 
+                          : 'Unknown'}
                       </span>
                     </span>
                   </div>
