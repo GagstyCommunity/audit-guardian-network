@@ -68,9 +68,9 @@ const CSPManagement: React.FC = () => {
                      action === 'suspend' ? 'suspended' : currentStatus;
                      
     try {
-      // Using type assertion to handle dynamic table access
+      // Use type assertion for dynamic table access
       const { error } = await (supabase
-        .from('csp_agents') as unknown as any)
+        .from('csp_agents') as any)
         .update({ status: newStatus })
         .eq('id', agentId);
         
@@ -91,14 +91,6 @@ const CSPManagement: React.FC = () => {
       });
     }
   };
-
-  const filteredAgents = cspAgents
-    .filter(agent => 
-      (agent.profile?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       agent.bank_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       agent.profile?.email?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (!filter || agent.status === filter)
-    );
 
   const columns = createColumns<CSPAgent>([
     {
@@ -233,7 +225,12 @@ const CSPManagement: React.FC = () => {
           </div>
           
           <DataTable
-            data={filteredAgents}
+            data={cspAgents.filter(agent => 
+              (agent.profile?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               agent.bank_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               agent.profile?.email?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+              (!filter || agent.status === filter)
+            )}
             columns={columns}
             loading={loading}
             emptyMessage="No CSP agents found"

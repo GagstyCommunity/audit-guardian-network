@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { PostgrestQueryBuilder } from '@supabase/supabase-js';
 
 export function useSupabaseData<T>(
   tableName: string, 
@@ -24,10 +23,10 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Using type assertion to handle dynamic table access
-      const supabaseQuery = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
-      
-      let query = supabaseQuery.select(options?.select || '*');
+      // Use type assertion for dynamic table access
+      let query = supabase
+        .from(tableName)
+        .select(options?.select || '*') as any;
 
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
@@ -90,8 +89,8 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Using type assertions to handle dynamic table access
-    const supabaseTable = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
+    // Use type assertion for dynamic table access
+    const supabaseTable = supabase.from(tableName) as any;
     let query: any;
     
     if (type === 'insert') {
