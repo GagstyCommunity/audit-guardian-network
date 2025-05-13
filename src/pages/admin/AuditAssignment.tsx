@@ -10,6 +10,7 @@ import { Calendar, CheckCircle, Clock, MapPin, UserCheck } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from 'date-fns';
+import { createColumns } from '@/utils/tableHelpers';
 
 interface Audit {
   id: string;
@@ -62,11 +63,10 @@ const AuditAssignment: React.FC = () => {
     return <Badge variant={variant}>{label}</Badge>;
   };
 
-  const columns = [
+  const columns = createColumns<Audit>([
     {
       header: 'CSP Agent',
-      accessorKey: 'csp',
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <div>
             <div className="font-medium">{row.csp?.profile?.name}</div>
@@ -77,8 +77,7 @@ const AuditAssignment: React.FC = () => {
     },
     {
       header: 'Priority',
-      accessorKey: 'priority',
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           {getPriorityBadge(row.priority)}
           {row.is_red_zone && (
@@ -89,8 +88,7 @@ const AuditAssignment: React.FC = () => {
     },
     {
       header: 'Schedule',
-      accessorKey: 'scheduled_for',
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <div>
           <div className="flex items-center">
             <Calendar className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -105,8 +103,7 @@ const AuditAssignment: React.FC = () => {
     },
     {
       header: 'Location',
-      accessorKey: (row: Audit) => `${row.location_lat},${row.location_long}`,
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <MapPin className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
           <span>{row.location_lat ? `${row.location_lat.toFixed(3)}, ${row.location_long.toFixed(3)}` : 'Not available'}</span>
@@ -115,8 +112,7 @@ const AuditAssignment: React.FC = () => {
     },
     {
       header: 'Auditor',
-      accessorKey: 'auditor',
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <Avatar className="h-8 w-8 mr-2">
             <AvatarImage src={row.auditor?.avatar_url} />
@@ -130,15 +126,13 @@ const AuditAssignment: React.FC = () => {
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <StatusBadge status={row.status} />
       ),
     },
     {
       header: 'Actions',
-      accessorKey: 'id',
-      cell: (row: Audit) => (
+      accessorKey: (row) => (
         <div className="flex space-x-2">
           {['pending', 'scheduled'].includes(row.status) ? (
             <>
@@ -156,7 +150,7 @@ const AuditAssignment: React.FC = () => {
         </div>
       ),
     },
-  ];
+  ]);
 
   return (
     <div className="space-y-6">

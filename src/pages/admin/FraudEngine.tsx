@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
@@ -11,6 +10,7 @@ import { format } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
 import { StatsCard } from '@/components/shared/StatsCard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { createColumns } from '@/utils/tableHelpers';
 
 interface FraudAlert {
   id: string;
@@ -64,11 +64,10 @@ const FraudEngine: React.FC = () => {
 
   const riskScore = getRiskScore();
   
-  const columns = [
+  const columns = createColumns<FraudAlert>([
     {
       header: 'Alert Type',
-      accessorKey: 'alert_type',
-      cell: (row: FraudAlert) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <AlertTriangle className={`mr-2 h-4 w-4 ${
             row.risk_level === 'critical' || row.risk_level === 'high' ? 'text-destructive' : 'text-amber-500'
@@ -84,8 +83,7 @@ const FraudEngine: React.FC = () => {
     },
     {
       header: 'CSP Agent',
-      accessorKey: 'csp',
-      cell: (row: FraudAlert) => (
+      accessorKey: (row) => (
         <div>
           <div className="font-medium">{row.csp?.profile?.name || 'Unknown'}</div>
           <div className="text-sm text-muted-foreground">{row.csp?.bank_id || 'No ID'}</div>
@@ -98,22 +96,19 @@ const FraudEngine: React.FC = () => {
     },
     {
       header: 'Risk Level',
-      accessorKey: 'risk_level',
-      cell: (row: FraudAlert) => (
+      accessorKey: (row) => (
         <StatusBadge status={row.risk_level} />
       ),
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: FraudAlert) => (
+      accessorKey: (row) => (
         <StatusBadge status={row.status} />
       ),
     },
     {
       header: 'Actions',
-      accessorKey: 'id',
-      cell: (row: FraudAlert) => (
+      accessorKey: (row) => (
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" className="h-8">
             Review
@@ -126,7 +121,7 @@ const FraudEngine: React.FC = () => {
         </div>
       ),
     },
-  ];
+  ]);
 
   return (
     <div className="space-y-6">
@@ -141,14 +136,14 @@ const FraudEngine: React.FC = () => {
         />
         <StatsCard
           title="High Risk Alerts"
-          value={highRiskAlerts.length}
+          value={highRiskAlerts.length.toString()}
           description="Critical and high risk alerts"
           trend={{ value: 12, isPositive: false }}
           isLoading={loading}
         />
         <StatsCard
           title="Open Alerts"
-          value={openAlerts.length}
+          value={openAlerts.length.toString()}
           description="Alerts requiring attention"
           isLoading={loading}
         />

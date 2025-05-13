@@ -23,8 +23,10 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      let query = supabase
-        .from(tableName)
+      // Using type assertion for the supabase client to bypass TypeScript restrictions
+      // since we're using dynamic table names that aren't known at compile time
+      let query = (supabase
+        .from(tableName) as any)
         .select(options?.select || '*');
 
       if (options?.column && options.value !== undefined) {
@@ -90,14 +92,14 @@ export async function mutateSupabaseData<T>(
     let query;
     
     if (type === 'insert') {
-      query = supabase.from(tableName).insert(data);
+      query = (supabase.from(tableName) as any).insert(data);
     } else if (type === 'update') {
-      query = supabase.from(tableName).update(data);
+      query = (supabase.from(tableName) as any).update(data);
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }
     } else if (type === 'delete') {
-      query = supabase.from(tableName).delete();
+      query = (supabase.from(tableName) as any).delete();
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }

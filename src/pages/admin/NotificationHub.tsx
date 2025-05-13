@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
@@ -12,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { createColumns } from '@/utils/tableHelpers';
 
 interface Notification {
   id: string;
@@ -93,11 +93,10 @@ const NotificationHub: React.FC = () => {
     }
   };
 
-  const columns = [
+  const columns = createColumns<Notification>([
     {
       header: 'Notification',
-      accessorKey: 'title',
-      cell: (row: Notification) => (
+      accessorKey: (row) => (
         <div className="flex items-start">
           {getNotificationTypeIcon(row.type)}
           <div className="ml-2">
@@ -114,8 +113,7 @@ const NotificationHub: React.FC = () => {
     },
     {
       header: 'Recipient',
-      accessorKey: 'profile.name',
-      cell: (row: Notification) => (
+      accessorKey: (row) => (
         <div>
           <div className="font-medium">{row.profile?.name || 'Unknown'}</div>
           <div className="text-sm text-muted-foreground capitalize">
@@ -126,8 +124,7 @@ const NotificationHub: React.FC = () => {
     },
     {
       header: 'Status',
-      accessorKey: 'read',
-      cell: (row: Notification) => (
+      accessorKey: (row) => (
         <Badge variant={row.read ? 'outline' : 'default'}>
           {row.read ? 'Read' : 'Unread'}
         </Badge>
@@ -135,8 +132,7 @@ const NotificationHub: React.FC = () => {
     },
     {
       header: 'Actions',
-      accessorKey: 'id',
-      cell: (row: Notification) => (
+      accessorKey: (row) => (
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" className="h-8">
             View
@@ -147,7 +143,7 @@ const NotificationHub: React.FC = () => {
         </div>
       ),
     },
-  ];
+  ]);
 
   return (
     <div className="space-y-6">

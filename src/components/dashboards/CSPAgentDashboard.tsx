@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card, 
@@ -15,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { useAuth } from '@/contexts/AuthContext';
 import { StatsCard } from '@/components/shared/StatsCard';
-import { DataTable } from '@/components/shared/DataTable';
+import { DataTable, Column } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { format } from 'date-fns';
 import {
@@ -29,32 +28,61 @@ import {
   Wallet
 } from 'lucide-react';
 
+// Define interface types for our data
+interface CSPAgent {
+  id: string;
+  status?: string;
+  risk_score?: number;
+  district?: string;
+  state?: string;
+  is_in_red_zone?: boolean;
+}
+
+interface Transaction {
+  transaction_date: string;
+  transaction_type: string;
+  receipt_id: string;
+  status: string;
+  amount: number;
+  fee_charged?: number;
+}
+
+interface FaceVerification {
+  verified_at: string;
+}
+
+interface Dispute {
+  dispute_type: string;
+  created_at: string;
+  status: string;
+}
+
 const CSPAgentDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { authState } = useAuth();
   
-  const { data: cspAgents } = useSupabaseData('csp_agents', {
+  const { data: cspAgents } = useSupabaseData<CSPAgent>('csp_agents', {
     column: 'profile_id',
     value: authState.user?.id
   });
   
   const currentAgent = cspAgents.length > 0 ? cspAgents[0] : null;
   
-  const { data: transactions, loading: transactionsLoading } = useSupabaseData('transactions', {
+  const { data: transactions, loading: transactionsLoading } = useSupabaseData<Transaction>('transactions', {
     column: 'csp_id',
     value: currentAgent?.id,
     orderBy: { column: 'transaction_date', ascending: false },
     limit: 5
   });
   
-  const { data: verifications } = useSupabaseData('face_verifications', {
+  const { data: verifications } = useSupabaseData<FaceVerification>('face_verifications', {
     column: 'profile_id',
     value: authState.user?.id,
     orderBy: { column: 'verified_at', ascending: false },
     limit: 1
   });
   
-  const { data: disputes, loading: disputesLoading } = useSupabaseData('disputes', {
+  const { data: disputes, loading: disputesLoading } = useSupabaseData<Dispute>('disputes', {
     column: 'csp_id',
     value: currentAgent?.id,
     orderBy: { column: 'created_at', ascending: false },
@@ -101,15 +129,14 @@ const CSPAgentDashboard: React.FC = () => {
   };
   
   // Table columns
-  const transactionColumns = [
+  const transactionColumns: Column<Transaction>[] = [
     {
       header: 'Receipt ID',
       accessorKey: 'receipt_id',
     },
     {
       header: 'Type',
-      accessorKey: 'transaction_type',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <Badge variant="outline" className="capitalize">
           {row.transaction_type.toLowerCase().replace('_', ' ')}
         </Badge>
@@ -117,39 +144,34 @@ const CSPAgentDashboard: React.FC = () => {
     },
     {
       header: 'Amount',
-      accessorKey: 'amount',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div className="font-medium">{formatCurrency(row.amount)}</div>
       ),
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <StatusBadge status={row.status} />
       ),
     },
   ];
   
-  const disputeColumns = [
+  const disputeColumns: Column<Dispute>[] = [
     {
       header: 'Dispute Type',
-      accessorKey: 'dispute_type',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div className="capitalize">{row.dispute_type.toLowerCase().replace('_', ' ')}</div>
       ),
     },
     {
       header: 'Date',
-      accessorKey: 'created_at',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div>{formatDate(row.created_at)}</div>
       ),
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <StatusBadge status={row.status} />
       ),
     },
@@ -270,7 +292,7 @@ const CSPAgentDashboard: React.FC = () => {
                     (currentAgent?.risk_score || 0) > 0.3 ? 'bg-yellow-100 text-yellow-800' : 
                     'bg-green-100 text-green-800'
                   }`}>
-                    {currentAgent ? (currentAgent.risk_score * 100).toFixed(0) : 0}%
+                    {currentAgent ? ((currentAgent.risk_score || 0) * 100).toFixed(0) : 0}%
                   </div>
                 </div>
               </div>

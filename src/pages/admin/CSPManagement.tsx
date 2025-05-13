@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -29,9 +28,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useSupabaseData } from '@/hooks/useSupabaseData';
+import { useSupabaseData, mutateSupabaseData } from '@/hooks/useSupabaseData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { createColumns } from '@/utils/tableHelpers';
 
 interface CSPAgent {
   id: string;
@@ -68,8 +68,9 @@ const CSPManagement: React.FC = () => {
                      action === 'suspend' ? 'suspended' : currentStatus;
                      
     try {
-      const { error } = await supabase
-        .from('csp_agents')
+      // Using type assertion to bypass TypeScript limitations for dynamic table names
+      const { error } = await (supabase
+        .from('csp_agents') as any)
         .update({ status: newStatus })
         .eq('id', agentId);
         
@@ -99,11 +100,10 @@ const CSPManagement: React.FC = () => {
       (!filter || agent.status === filter)
     );
 
-  const columns = [
+  const columns = createColumns<CSPAgent>([
     {
       header: 'Name',
-      accessorKey: 'profile.name',
-      cell: (row: CSPAgent) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <div className="ml-2">
             <div className="font-medium">{row.profile.name}</div>
@@ -114,8 +114,7 @@ const CSPManagement: React.FC = () => {
     },
     {
       header: 'Contact',
-      accessorKey: 'profile.email',
-      cell: (row: CSPAgent) => (
+      accessorKey: (row) => (
         <div>
           <div>{row.profile.email}</div>
           <div className="text-sm text-muted-foreground">{row.profile.phone_number}</div>
@@ -124,8 +123,7 @@ const CSPManagement: React.FC = () => {
     },
     {
       header: 'Location',
-      accessorKey: 'profile.region',
-      cell: (row: CSPAgent) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <MapPin className="mr-1 h-3 w-3 text-muted-foreground" />
           <span>{row.profile.district}, {row.profile.state}</span>
@@ -137,8 +135,7 @@ const CSPManagement: React.FC = () => {
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: CSPAgent) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <StatusBadge status={row.status} />
           {row.risk_score > 0.5 && (
@@ -152,8 +149,7 @@ const CSPManagement: React.FC = () => {
     },
     {
       header: 'Actions',
-      accessorKey: (row: CSPAgent) => row.id,
-      cell: (row: CSPAgent) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -186,7 +182,7 @@ const CSPManagement: React.FC = () => {
         </div>
       ),
     },
-  ];
+  ]);
 
   return (
     <div className="space-y-6">

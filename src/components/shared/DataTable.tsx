@@ -1,82 +1,66 @@
 
 import React from 'react';
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell,
-  TableCaption
-} from "@/components/ui/table";
-import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ReactNode } from 'react';
 
-interface Column<T> {
+export interface Column<T> {
   header: string;
-  accessorKey: keyof T | ((data: T) => React.ReactNode);
-  cell?: (data: T) => React.ReactNode;
+  accessorKey: keyof T | ((data: T) => ReactNode);
+  cell?: (row: T) => ReactNode;
 }
 
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
-  caption?: string;
   emptyMessage?: string;
 }
 
-export function DataTable<T extends object>({
-  data,
-  columns,
-  loading = false,
-  caption,
-  emptyMessage = "No data available"
-}: DataTableProps<T>) {
+export function DataTable<T>({ data, columns, loading = false, emptyMessage = 'No data available' }: DataTableProps<T>) {
   if (loading) {
     return (
-      <div className="space-y-2">
-        {Array(5).fill(0).map((_, i) => (
-          <Skeleton key={i} className="h-12 w-full" />
-        ))}
+      <div className="flex items-center justify-center h-32">
+        <div className="text-center">
+          <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data.length) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <Table>
-      {caption && <TableCaption>{caption}</TableCaption>}
-      <TableHeader>
-        <TableRow>
-          {columns.map((column, index) => (
-            <TableHead key={index}>{column.header}</TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.length === 0 ? (
+    <div className="border rounded-md">
+      <Table>
+        <TableHeader>
           <TableRow>
-            <TableCell colSpan={columns.length} className="text-center py-6 text-muted-foreground">
-              {emptyMessage}
-            </TableCell>
+            {columns.map((column, index) => (
+              <TableHead key={index}>{column.header}</TableHead>
+            ))}
           </TableRow>
-        ) : (
-          data.map((row, rowIndex) => (
+        </TableHeader>
+        <TableBody>
+          {data.map((row, rowIndex) => (
             <TableRow key={rowIndex}>
-              {columns.map((column, colIndex) => {
-                const value = typeof column.accessorKey === 'function' 
-                  ? column.accessorKey(row) 
-                  : row[column.accessorKey];
-                
-                return (
-                  <TableCell key={colIndex}>
-                    {column.cell ? column.cell(row) : value as React.ReactNode}
-                  </TableCell>
-                );
-              })}
+              {columns.map((column, colIndex) => (
+                <TableCell key={colIndex}>
+                  {column.cell ? column.cell(row) : 
+                    typeof column.accessorKey === 'function' 
+                      ? column.accessorKey(row)
+                      : row[column.accessorKey]}
+                </TableCell>
+              ))}
             </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

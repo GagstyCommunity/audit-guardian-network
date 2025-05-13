@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/shared/StatsCard';
-import { DataTable } from '@/components/shared/DataTable';
+import { DataTable, Column } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { 
@@ -25,28 +25,50 @@ import {
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
+// Define types for the data we're fetching
+interface CSPAgent {
+  profile?: {
+    name?: string;
+  };
+  bank_id?: string;
+  risk_score?: number;
+  status?: string;
+}
+
+interface FraudAlert {
+  alert_type?: string;
+  risk_level?: string;
+  status?: string;
+}
+
+interface Audit {
+  scheduled_for?: string;
+  priority?: number;
+  status?: string;
+}
+
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   
-  const { data: cspAgents, loading: agentsLoading } = useSupabaseData('csp_agents', {
+  const { data: cspAgents, loading: agentsLoading } = useSupabaseData<CSPAgent>('csp_agents', {
     select: '*, profile:profiles(*)',
     limit: 5,
     orderBy: { column: 'risk_score', ascending: false }
   });
   
-  const { data: fraudAlerts, loading: alertsLoading } = useSupabaseData('fraud_alerts', {
+  const { data: fraudAlerts, loading: alertsLoading } = useSupabaseData<FraudAlert>('fraud_alerts', {
     select: '*',
     limit: 5,
     orderBy: { column: 'detected_at', ascending: false }
   });
   
-  const { data: audits, loading: auditsLoading } = useSupabaseData('audits', {
+  const { data: audits, loading: auditsLoading } = useSupabaseData<Audit>('audits', {
     select: '*',
     limit: 5,
     orderBy: { column: 'scheduled_for', ascending: true }
   });
   
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
     if (!dateString) return 'Not scheduled';
     try {
       return format(new Date(dateString), 'PP');
@@ -56,11 +78,10 @@ const AdminDashboard: React.FC = () => {
   };
   
   // Columns for high risk agents
-  const agentColumns = [
+  const agentColumns: Column<CSPAgent>[] = [
     {
       header: 'Agent',
-      accessorKey: 'profile.name',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div>
           <div className="font-medium">{row.profile?.name}</div>
           <div className="text-sm text-muted-foreground">{row.bank_id}</div>
@@ -69,32 +90,29 @@ const AdminDashboard: React.FC = () => {
     },
     {
       header: 'Risk Score',
-      accessorKey: 'risk_score',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div className={`font-medium ${
-          row.risk_score > 0.7 ? 'text-destructive' : 
-          row.risk_score > 0.4 ? 'text-amber-500' : 
+          (row.risk_score || 0) > 0.7 ? 'text-destructive' : 
+          (row.risk_score || 0) > 0.4 ? 'text-amber-500' : 
           'text-green-600'
         }`}>
-          {(row.risk_score * 100).toFixed(0)}%
+          {((row.risk_score || 0) * 100).toFixed(0)}%
         </div>
       ),
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: any) => (
-        <StatusBadge status={row.status} />
+      accessorKey: (row) => (
+        <StatusBadge status={row.status || 'unknown'} />
       ),
     },
   ];
   
   // Columns for fraud alerts
-  const alertColumns = [
+  const alertColumns: Column<FraudAlert>[] = [
     {
       header: 'Alert Type',
-      accessorKey: 'alert_type',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <AlertTriangle className={`mr-2 h-4 w-4 ${
             row.risk_level === 'critical' || row.risk_level === 'high' ? 'text-destructive' : 'text-amber-500'
@@ -105,26 +123,23 @@ const AdminDashboard: React.FC = () => {
     },
     {
       header: 'Risk Level',
-      accessorKey: 'risk_level',
-      cell: (row: any) => (
-        <StatusBadge status={row.risk_level} />
+      accessorKey: (row) => (
+        <StatusBadge status={row.risk_level || 'unknown'} />
       ),
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: any) => (
-        <StatusBadge status={row.status} />
+      accessorKey: (row) => (
+        <StatusBadge status={row.status || 'unknown'} />
       ),
     },
   ];
   
   // Columns for audits
-  const auditColumns = [
+  const auditColumns: Column<Audit>[] = [
     {
       header: 'Scheduled For',
-      accessorKey: 'scheduled_for',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <div className="flex items-center">
           <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
           <span>{formatDate(row.scheduled_for)}</span>
@@ -133,8 +148,7 @@ const AdminDashboard: React.FC = () => {
     },
     {
       header: 'Priority',
-      accessorKey: 'priority',
-      cell: (row: any) => (
+      accessorKey: (row) => (
         <StatusBadge 
           status={row.priority === 1 ? 'high' : row.priority === 2 ? 'medium' : 'low'} 
         />
@@ -142,9 +156,8 @@ const AdminDashboard: React.FC = () => {
     },
     {
       header: 'Status',
-      accessorKey: 'status',
-      cell: (row: any) => (
-        <StatusBadge status={row.status} />
+      accessorKey: (row) => (
+        <StatusBadge status={row.status || 'unknown'} />
       ),
     },
   ];
