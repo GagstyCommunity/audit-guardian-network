@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card,
@@ -213,7 +212,7 @@ const AdminDashboard: React.FC = () => {
               data={cspAgents}
               columns={agentColumns}
               loading={agentsLoading}
-              emptyMessage="No high risk agents found"
+              emptyState="No high risk agents found"
             />
           </CardContent>
           <CardFooter className="flex justify-end">
@@ -234,7 +233,7 @@ const AdminDashboard: React.FC = () => {
               data={fraudAlerts}
               columns={alertColumns}
               loading={alertsLoading}
-              emptyMessage="No recent fraud alerts"
+              emptyState="No recent fraud alerts"
             />
           </CardContent>
           <CardFooter className="flex justify-end">
@@ -256,7 +255,7 @@ const AdminDashboard: React.FC = () => {
             data={audits}
             columns={auditColumns}
             loading={auditsLoading}
-            emptyMessage="No upcoming audits"
+            emptyState="No upcoming audits"
           />
         </CardContent>
         <CardFooter className="flex justify-end">

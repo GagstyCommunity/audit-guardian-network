@@ -245,7 +245,7 @@ const CSPAgentDashboard: React.FC = () => {
                 data={transactions}
                 columns={transactionColumns}
                 loading={transactionsLoading}
-                emptyMessage="No recent transactions"
+                emptyState="No recent transactions"
               />
             </CardContent>
             <CardFooter className="flex justify-end">
@@ -315,7 +315,7 @@ const CSPAgentDashboard: React.FC = () => {
                 data={disputes}
                 columns={disputeColumns}
                 loading={disputesLoading}
-                emptyMessage="No open disputes"
+                emptyState="No open disputes"
               />
             </CardContent>
             <CardFooter className="flex justify-end">

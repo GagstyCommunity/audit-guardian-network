@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
@@ -153,7 +152,7 @@ const AuditTrailLogs: React.FC = () => {
             data={filteredLogs}
             columns={columns}
             loading={false}
-            emptyMessage="No logs found matching the filters"
+            emptyState="No logs found matching the filters"
           />
         </CardContent>
       </Card>

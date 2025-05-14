@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
@@ -177,7 +176,7 @@ const AuditAssignment: React.FC = () => {
             data={filteredAudits}
             columns={columns}
             loading={loading}
-            emptyMessage="No audits found"
+            emptyState="No audits found"
           />
         </CardContent>
       </Card>

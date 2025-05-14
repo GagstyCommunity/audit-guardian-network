@@ -179,7 +179,7 @@ const FraudEngine: React.FC = () => {
             data={filteredAlerts}
             columns={columns}
             loading={loading}
-            emptyMessage="No fraud alerts found"
+            emptyState="No fraud alerts found"
           />
         </CardContent>
         <CardFooter className="flex justify-between">

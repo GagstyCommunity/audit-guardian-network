@@ -23,7 +23,8 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use explicit any typing to bypass TypeScript's strict checks
+      // Use type assertion to handle TypeScript's strict type checking
+      // This is necessary because Supabase's TypeScript definitions don't match our dynamic usage
       let query = supabase.from(tableName) as any;
       query = query.select(options?.select || '*');
 

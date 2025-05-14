@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
@@ -96,17 +95,18 @@ const Transactions: React.FC = () => {
     ? (successCount / filteredTransactions.length * 100).toFixed(0)
     : '0';
 
+  // Column definitions for DataTable
   const columns = [
     {
       header: 'Receipt',
-      accessorKey: 'receipt_id',
+      accessorKey: (row: Transaction) => row.receipt_id,
       cell: (row: Transaction) => (
         <div className="font-medium">{row.receipt_id}</div>
       ),
     },
     {
       header: 'Date & Time',
-      accessorKey: 'transaction_date',
+      accessorKey: (row: Transaction) => row.transaction_date,
       cell: (row: Transaction) => (
         <div className="flex items-center">
           <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -116,7 +116,7 @@ const Transactions: React.FC = () => {
     },
     {
       header: 'Customer',
-      accessorKey: 'customer_name',
+      accessorKey: (row: Transaction) => row.customer_name,
       cell: (row: Transaction) => (
         <div>
           <div className="font-medium">{row.customer_name}</div>
@@ -126,7 +126,7 @@ const Transactions: React.FC = () => {
     },
     {
       header: 'Type',
-      accessorKey: 'transaction_type',
+      accessorKey: (row: Transaction) => row.transaction_type,
       cell: (row: Transaction) => (
         <Badge variant="outline" className="capitalize">
           {row.transaction_type.toLowerCase().replace('_', ' ')}
@@ -135,7 +135,7 @@ const Transactions: React.FC = () => {
     },
     {
       header: 'Amount',
-      accessorKey: 'amount',
+      accessorKey: (row: Transaction) => row.amount,
       cell: (row: Transaction) => (
         <div className="font-medium text-right">
           {formatCurrency(row.amount)}
@@ -144,7 +144,7 @@ const Transactions: React.FC = () => {
     },
     {
       header: 'Fee',
-      accessorKey: 'fee_charged',
+      accessorKey: (row: Transaction) => row.fee_charged,
       cell: (row: Transaction) => (
         <div className="text-right">
           {row.fee_charged ? formatCurrency(row.fee_charged) : '₹0.00'}
@@ -153,14 +153,14 @@ const Transactions: React.FC = () => {
     },
     {
       header: 'Status',
-      accessorKey: 'status',
+      accessorKey: (row: Transaction) => row.status,
       cell: (row: Transaction) => (
         <StatusBadge status={row.status} />
       ),
     },
     {
       header: 'Actions',
-      accessorKey: 'id',
+      accessorKey: (row: Transaction) => row.id,
       cell: (row: Transaction) => (
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" className="h-8">
@@ -272,7 +272,7 @@ const Transactions: React.FC = () => {
             data={filteredTransactions}
             columns={columns}
             loading={loading}
-            emptyMessage="No transactions found"
+            emptyState="No transactions found"
           />
         </CardContent>
         <CardFooter className="flex justify-between">
