@@ -1,4 +1,5 @@
 
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { mutateSupabaseData } from '@/hooks/useSupabaseData';
@@ -69,9 +70,9 @@ export const api = {
   // Query records
   async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
     try {
-      // Use any type to bypass TypeScript's strict type checking
-      const supabaseTable = supabase.from(table) as any;
-      let query = supabaseTable.select(select);
+      // Cast the entire client to any to avoid TypeScript errors
+      const client = supabase as any;
+      let query = client.from(table).select(select);
 
       if (column && value !== undefined) {
         query = query.eq(column, value);
@@ -131,3 +132,4 @@ export const api = {
 };
 
 export default api;
+

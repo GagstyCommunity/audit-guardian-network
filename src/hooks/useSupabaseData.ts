@@ -23,12 +23,11 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use any type to bypass TypeScript's strict type checking
-      let queryBuilder = supabase.from(tableName) as any;
+      // Cast the entire supabase client to any to avoid TypeScript errors
+      // This allows using dynamic table names that aren't in the generated types
+      const client = supabase as any;
+      let queryBuilder = client.from(tableName).select(options?.select || '*');
       
-      // Apply select
-      queryBuilder = queryBuilder.select(options?.select || '*');
-
       if (options?.column && options.value !== undefined) {
         queryBuilder = queryBuilder.eq(options.column, options.value);
       }
@@ -90,19 +89,19 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Use any type to bypass TypeScript's strict type checking
-    const supabaseTable = supabase.from(tableName) as any;
-    let query: any;
+    // Cast the entire supabase client to any to avoid TypeScript errors
+    const client = supabase as any;
+    let query = client.from(tableName);
     
     if (type === 'insert') {
-      query = supabaseTable.insert(data);
+      query = query.insert(data);
     } else if (type === 'update') {
-      query = supabaseTable.update(data);
+      query = query.update(data);
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }
     } else if (type === 'delete') {
-      query = supabaseTable.delete();
+      query = query.delete();
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
       }
