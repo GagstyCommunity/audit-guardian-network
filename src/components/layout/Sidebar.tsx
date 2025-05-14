@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types/auth.types';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   BarChart3, 
   Users, 
@@ -32,7 +33,9 @@ import {
   Shield,
   Cog,
   FileCheck,
-  Eye
+  Eye,
+  Menu,
+  X
 } from 'lucide-react';
 import { colorPalette } from '../../types/auth.types';
 
@@ -81,6 +84,17 @@ const Sidebar: React.FC = () => {
   const { authState, isAuthorized } = useAuth();
   const { user } = authState;
   const [expandedSections, setExpandedSections] = useState<string[]>(['public', 'dashboard']);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Close sidebar on mobile when navigating to a new page
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => 
@@ -88,6 +102,10 @@ const Sidebar: React.FC = () => {
         ? prev.filter(s => s !== section)
         : [...prev, section]
     );
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => !prev);
   };
   
   // Define menu sections based on user role
@@ -411,49 +429,95 @@ const Sidebar: React.FC = () => {
     },
   ];
 
+  // Mobile sidebar toggle button (fixed position)
+  const MobileToggle = () => (
+    <button
+      className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-csp-blue text-white shadow-lg md:hidden"
+      onClick={toggleSidebar}
+      aria-label="Toggle sidebar"
+    >
+      {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+    </button>
+  );
+
+  // If mobile and sidebar is closed, only show the toggle button
+  if (isMobile && !sidebarOpen) {
+    return <MobileToggle />;
+  }
+
   return (
-    <div className="hidden h-full w-64 flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white p-4 md:flex">
-      {menuSections.map((section) => {
-        const filteredItems = section.items.filter(item => 
-          user && isAuthorized(item.roles)
-        );
-        
-        if (filteredItems.length === 0) return null;
-        
-        const isExpanded = expandedSections.includes(section.title.toLowerCase());
-        
-        return (
-          <div key={section.title} className="flex flex-col gap-1">
-            <button
-              className="flex items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider"
-              onClick={() => toggleSection(section.title.toLowerCase())}
-              style={{ color: colorPalette.primaryPurple }}
+    <>
+      {isMobile && <MobileToggle />}
+      <div 
+        className={cn(
+          "flex h-full w-64 flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white p-4 transition-all duration-300",
+          isMobile && "fixed left-0 top-0 z-40 shadow-lg",
+          isMobile && !sidebarOpen && "transform -translate-x-full"
+        )}
+      >
+        {/* Mobile close button inside sidebar */}
+        {isMobile && (
+          <div className="flex justify-end">
+            <button 
+              onClick={toggleSidebar}
+              className="rounded-full p-1 hover:bg-gray-100"
             >
-              <span>{section.title}</span>
-              {isExpanded ? (
-                <ChevronDown size={14} />
-              ) : (
-                <ChevronRight size={14} />
-              )}
+              <X size={20} />
             </button>
-            
-            {isExpanded && (
-              <div className="ml-2 flex flex-col space-y-1 pl-2">
-                {filteredItems.map((item) => (
-                  <SidebarItem
-                    key={item.to}
-                    to={item.to}
-                    icon={item.icon}
-                    label={item.label}
-                    end={item.end}
-                  />
-                ))}
-              </div>
-            )}
           </div>
-        );
-      })}
-    </div>
+        )}
+        
+        {/* Sidebar content */}
+        {menuSections.map((section) => {
+          const filteredItems = section.items.filter(item => 
+            user && isAuthorized(item.roles)
+          );
+          
+          if (filteredItems.length === 0) return null;
+          
+          const isExpanded = expandedSections.includes(section.title.toLowerCase());
+          
+          return (
+            <div key={section.title} className="flex flex-col gap-1">
+              <button
+                className="flex items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider"
+                onClick={() => toggleSection(section.title.toLowerCase())}
+                style={{ color: colorPalette.primaryPurple }}
+              >
+                <span>{section.title}</span>
+                {isExpanded ? (
+                  <ChevronDown size={14} />
+                ) : (
+                  <ChevronRight size={14} />
+                )}
+              </button>
+              
+              {isExpanded && (
+                <div className="ml-2 flex flex-col space-y-1 pl-2">
+                  {filteredItems.map((item) => (
+                    <SidebarItem
+                      key={item.to}
+                      to={item.to}
+                      icon={item.icon}
+                      label={item.label}
+                      end={item.end}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Mobile overlay backdrop */}
+        {isMobile && sidebarOpen && (
+          <div 
+            className="fixed inset-0 z-30 bg-black bg-opacity-50"
+            onClick={toggleSidebar}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { 
   Card,
   CardContent, 
@@ -11,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/shared/StatsCard';
 import { DataTable, Column } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { 
   AlertTriangle, 
   ArrowRight, 
@@ -23,49 +23,47 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { CSPAgent } from '@/types/agent.types';
+import MockData from '@/services/mockDataService';
 
 // Define types for the data we're fetching
-interface CSPAgent {
-  profile?: {
-    name?: string;
-  };
-  bank_id?: string;
-  risk_score?: number;
-  status?: string;
-}
-
 interface FraudAlert {
+  id: string;
   alert_type?: string;
   risk_level?: string;
   status?: string;
+  detected_at?: string;
+  details?: string;
 }
 
 interface Audit {
+  id: string;
   scheduled_for?: string;
   priority?: number;
   status?: string;
+  agent_id?: string;
+  auditor_id?: string;
+  location?: string;
 }
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [cspAgents, setCspAgents] = useState<CSPAgent[]>([]);
+  const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([]);
+  const [audits, setAudits] = useState<Audit[]>([]);
   
-  const { data: cspAgents, loading: agentsLoading } = useSupabaseData<CSPAgent>('csp_agents', {
-    select: '*, profile:profiles(*)',
-    limit: 5,
-    orderBy: { column: 'risk_score', ascending: false }
-  });
-  
-  const { data: fraudAlerts, loading: alertsLoading } = useSupabaseData<FraudAlert>('fraud_alerts', {
-    select: '*',
-    limit: 5,
-    orderBy: { column: 'detected_at', ascending: false }
-  });
-  
-  const { data: audits, loading: auditsLoading } = useSupabaseData<Audit>('audits', {
-    select: '*',
-    limit: 5,
-    orderBy: { column: 'scheduled_for', ascending: true }
-  });
+  useEffect(() => {
+    // Simulate API loading
+    const timer = setTimeout(() => {
+      setCspAgents(MockData.agents(10).sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0)).slice(0, 5));
+      setFraudAlerts(MockData.fraudAlerts(5));
+      setAudits(MockData.audits(5));
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Not scheduled';
@@ -82,7 +80,7 @@ const AdminDashboard: React.FC = () => {
       header: 'Agent',
       accessorKey: (row) => (
         <div>
-          <div className="font-medium">{row.profile?.name}</div>
+          <div className="font-medium">{row.profile?.name || row.name}</div>
           <div className="text-sm text-muted-foreground">{row.bank_id}</div>
         </div>
       ),
@@ -162,7 +160,6 @@ const AdminDashboard: React.FC = () => {
   ];
   
   const totalActive = cspAgents.filter(agent => agent.status === 'active').length;
-  const totalSuspended = cspAgents.filter(agent => agent.status === 'suspended').length;
   const openAlerts = fraudAlerts.filter(alert => alert.status === 'open').length;
   const pendingAudits = audits.filter(audit => audit.status === 'pending').length;
   
@@ -175,14 +172,14 @@ const AdminDashboard: React.FC = () => {
           description="Active agents"
           icon={Users}
           trend={{ value: 12, isPositive: true }}
-          isLoading={agentsLoading}
+          isLoading={loading}
         />
         <StatsCard
           title="Pending Audits"
           value={`${pendingAudits}`}
           description="Scheduled for this week"
           icon={Clock}
-          isLoading={auditsLoading}
+          isLoading={loading}
         />
         <StatsCard
           title="Open Fraud Alerts"
@@ -190,14 +187,14 @@ const AdminDashboard: React.FC = () => {
           description="Requiring attention"
           icon={AlertTriangle}
           trend={{ value: 5, isPositive: false }}
-          isLoading={alertsLoading}
+          isLoading={loading}
         />
         <StatsCard
           title="System Status"
-          value={!alertsLoading && openAlerts > 3 ? "At Risk" : "Normal"}
+          value={loading ? "Loading..." : openAlerts > 3 ? "At Risk" : "Normal"}
           description="All systems operational"
           icon={Activity}
-          isLoading={alertsLoading}
+          isLoading={loading}
         />
       </div>
 
@@ -211,7 +208,7 @@ const AdminDashboard: React.FC = () => {
             <DataTable
               data={cspAgents}
               columns={agentColumns}
-              loading={agentsLoading}
+              loading={loading}
               emptyState="No high risk agents found"
             />
           </CardContent>
@@ -232,7 +229,7 @@ const AdminDashboard: React.FC = () => {
             <DataTable
               data={fraudAlerts}
               columns={alertColumns}
-              loading={alertsLoading}
+              loading={loading}
               emptyState="No recent fraud alerts"
             />
           </CardContent>
@@ -254,7 +251,7 @@ const AdminDashboard: React.FC = () => {
           <DataTable
             data={audits}
             columns={auditColumns}
-            loading={auditsLoading}
+            loading={loading}
             emptyState="No upcoming audits"
           />
         </CardContent>
@@ -277,20 +274,21 @@ const AdminDashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold">War Mode: {
-                !alertsLoading && openAlerts > 5 ? (
+                loading ? "Loading..." : openAlerts > 5 ? (
                   <span className="text-destructive">Recommended</span>
                 ) : (
                   <span className="text-green-600">Not Active</span>
                 )
               }</div>
               <p className="text-muted-foreground">
-                {!alertsLoading && openAlerts > 5
+                {loading ? "Loading system status..." : 
+                 openAlerts > 5
                   ? "High number of security alerts detected. Consider activating War Mode."
                   : "System operating under normal conditions."}
               </p>
             </div>
             <Button 
-              variant={!alertsLoading && openAlerts > 5 ? "destructive" : "outline"}
+              variant={loading ? "outline" : openAlerts > 5 ? "destructive" : "outline"}
               onClick={() => navigate('/admin/war-mode')}
             >
               War Mode Controls

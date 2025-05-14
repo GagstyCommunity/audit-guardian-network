@@ -1,135 +1,204 @@
 
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
-import { mutateSupabaseData } from '@/hooks/useSupabaseData';
 
-// Types
-export interface CreateParams<T> {
-  table: string;
-  data: T;
-  returning?: string;
-}
-
-export interface UpdateParams<T> {
-  table: string;
-  data: Partial<T>;
-  column: string;
-  value: string | number;
-  returning?: string;
-}
-
-export interface DeleteParams {
-  table: string;
-  column: string;
-  value: string | number;
-}
-
-export interface QueryParams {
+interface QueryParams {
   table: string;
   select?: string;
   column?: string;
   value?: any;
-  order?: { column: string; ascending?: boolean };
+  order?: {
+    column: string;
+    ascending: boolean;
+  };
   limit?: number;
-  filters?: { column: string; value: any; operator?: 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'like' }[];
+  filters?: Array<{
+    column: string;
+    operator: 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'like';
+    value: any;
+  }>;
 }
 
-// API Services
-export const api = {
-  // Create a new record
-  async create<T, R = any>({ table, data, returning }: CreateParams<T>) {
-    try {
-      return await mutateSupabaseData('insert', table, data, { returning });
-    } catch (error) {
-      console.error(`Error creating ${table}:`, error);
-      throw error;
-    }
-  },
+interface MutationParams {
+  table: string;
+  data: any;
+  column?: string;
+  value?: any;
+}
 
-  // Update a record
-  async update<T, R = any>({ table, data, column, value, returning }: UpdateParams<T>) {
-    try {
-      return await mutateSupabaseData('update', table, data, { column, value, returning });
-    } catch (error) {
-      console.error(`Error updating ${table}:`, error);
-      throw error;
-    }
-  },
-
-  // Delete a record
-  async delete({ table, column, value }: DeleteParams) {
-    try {
-      return await mutateSupabaseData('delete', table, undefined, { column, value });
-    } catch (error) {
-      console.error(`Error deleting from ${table}:`, error);
-      throw error;
-    }
-  },
-
-  // Query records
-  async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
-    try {
-      // Cast the entire client to any to avoid TypeScript errors
-      const client = supabase as any;
-      let query = client.from(table).select(select);
-
-      if (column && value !== undefined) {
-        query = query.eq(column, value);
-      }
-
-      if (filters && filters.length > 0) {
-        filters.forEach(filter => {
-          const { column, value, operator = 'eq' } = filter;
-          switch (operator) {
-            case 'eq':
-              query = query.eq(column, value);
-              break;
-            case 'neq':
-              query = query.neq(column, value);
-              break;
-            case 'gt':
-              query = query.gt(column, value);
-              break;
-            case 'lt':
-              query = query.lt(column, value);
-              break;
-            case 'gte':
-              query = query.gte(column, value);
-              break;
-            case 'lte':
-              query = query.lte(column, value);
-              break;
-            case 'like':
-              query = query.like(column, `%${value}%`);
-              break;
-          }
+const api = {
+  // Authentication methods
+  auth: {
+    signUp: async (email: string, password: string) => {
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
         });
+        
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error('Auth error:', error);
+        throw error;
       }
-
-      if (order) {
-        query = query.order(order.column, { ascending: order.ascending !== false });
+    },
+    
+    signIn: async (email: string, password: string) => {
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error('Auth error:', error);
+        throw error;
       }
-
-      if (limit) {
-        query = query.limit(limit);
+    },
+    
+    signOut: async () => {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        return true;
+      } catch (error) {
+        console.error('Auth error:', error);
+        throw error;
       }
+    },
+  },
+  
+  // Data methods
+  data: {
+    // Query records
+    async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
+      try {
+        // Cast the entire client to any to avoid TypeScript errors
+        const client = supabase as any;
+        let query = client.from(table).select(select);
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-      return (data || []) as T[];
-    } catch (error) {
-      console.error(`Error querying ${table}:`, error);
-      toast({
-        title: "Error",
-        description: `Failed to load data from ${table}`,
-        variant: "destructive"
-      });
-      throw error;
+        if (column && value !== undefined) {
+          query = query.eq(column, value);
+        }
+        
+        if (filters) {
+          filters.forEach(filter => {
+            switch (filter.operator) {
+              case 'eq':
+                query = query.eq(filter.column, filter.value);
+                break;
+              case 'neq':
+                query = query.neq(filter.column, filter.value);
+                break;
+              case 'gt':
+                query = query.gt(filter.column, filter.value);
+                break;
+              case 'lt':
+                query = query.lt(filter.column, filter.value);
+                break;
+              case 'gte':
+                query = query.gte(filter.column, filter.value);
+                break;
+              case 'lte':
+                query = query.lte(filter.column, filter.value);
+                break;
+              case 'like':
+                query = query.like(filter.column, `%${filter.value}%`);
+                break;
+            }
+          });
+        }
+        
+        if (order) {
+          query = query.order(order.column, { ascending: order.ascending });
+        }
+        
+        if (limit) {
+          query = query.limit(limit);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) throw error;
+        return data as T[];
+      } catch (error) {
+        console.error('Query error:', error);
+        throw error;
+      }
+    },
+    
+    // Insert record(s)
+    async insert<T>({ table, data }: Omit<MutationParams, 'column' | 'value'>): Promise<T> {
+      try {
+        const { data: result, error } = await (supabase as any).from(table).insert(data).select().single();
+        
+        if (error) throw error;
+        toast({ title: "Success", description: "Record created successfully" });
+        return result as T;
+      } catch (error) {
+        console.error('Insert error:', error);
+        toast({ 
+          title: "Error", 
+          description: "Failed to create record", 
+          variant: "destructive" 
+        });
+        throw error;
+      }
+    },
+    
+    // Update record(s)
+    async update<T>({ table, data, column, value }: MutationParams): Promise<T> {
+      try {
+        const query = (supabase as any).from(table).update(data);
+        
+        if (column && value !== undefined) {
+          query.eq(column, value);
+        }
+        
+        const { data: result, error } = await query.select().single();
+        
+        if (error) throw error;
+        toast({ title: "Success", description: "Record updated successfully" });
+        return result as T;
+      } catch (error) {
+        console.error('Update error:', error);
+        toast({ 
+          title: "Error", 
+          description: "Failed to update record", 
+          variant: "destructive" 
+        });
+        throw error;
+      }
+    },
+    
+    // Delete record(s)
+    async delete({ table, column, value }: Omit<MutationParams, 'data'>): Promise<boolean> {
+      try {
+        const query = (supabase as any).from(table).delete();
+        
+        if (column && value !== undefined) {
+          query.eq(column, value);
+        }
+        
+        const { error } = await query;
+        
+        if (error) throw error;
+        toast({ title: "Success", description: "Record deleted successfully" });
+        return true;
+      } catch (error) {
+        console.error('Delete error:', error);
+        toast({ 
+          title: "Error", 
+          description: "Failed to delete record", 
+          variant: "destructive" 
+        });
+        throw error;
+      }
     }
   }
 };
 
 export default api;
-
