@@ -22,6 +22,53 @@ import CustomerCornerPage from "./pages/public/CustomerCornerPage";
 import CSRImpactPage from "./pages/public/CSRImpactPage";
 import ContactPage from "./pages/public/ContactPage";
 
+// Admin pages
+import CSPManagement from "./pages/admin/CSPManagement";
+import FraudEngine from "./pages/admin/FraudEngine";
+import AuditTrailLogs from "./pages/admin/AuditTrailLogs";
+import AuditAssignment from "./pages/admin/AuditAssignment";
+import NotificationHub from "./pages/admin/NotificationHub";
+import SystemSettings from "./pages/admin/SystemSettings";
+import WarModeControl from "./pages/admin/WarModeControl";
+
+// Agent pages
+import Transactions from "./pages/agent/Transactions";
+import FacialCheckIn from "./pages/agent/FacialCheckIn";
+import DeviceStatus from "./pages/agent/DeviceStatus";
+import DisputeCenter from "./pages/agent/DisputeCenter";
+import AgentReports from "./pages/agent/AgentReports";
+import WarModeTools from "./pages/agent/WarModeTools";
+import ArmyFamilyPanel from "./pages/agent/ArmyFamilyPanel";
+import MonthlySelfCheck from "./pages/agent/MonthlySelfCheck";
+import FraudAlerts from "./pages/agent/FraudAlerts";
+
+// Auditor pages
+import AuditorTasks from "./pages/auditor/AuditorTasks";
+import AuditForm from "./pages/auditor/AuditForm";
+import VisitLogs from "./pages/auditor/VisitLogs";
+import RedZoneProtocol from "./pages/auditor/RedZoneProtocol";
+import LiveVisitChecklist from "./pages/auditor/LiveVisitChecklist";
+
+// Bank Officer pages
+import CSPRegistry from "./pages/bank/CSPRegistry";
+import FraudDashboard from "./pages/bank/FraudDashboard";
+import DocumentAccess from "./pages/bank/DocumentAccess";
+import DecisionPanel from "./pages/bank/DecisionPanel";
+import DownloadReports from "./pages/bank/DownloadReports";
+import MilitaryCoordination from "./pages/bank/MilitaryCoordination";
+import CustomerComplaintsReview from "./pages/bank/CustomerComplaintsReview";
+
+// Customer pages
+import VerifyFee from "./pages/customer/VerifyFee";
+import SubmitComplaint from "./pages/customer/SubmitComplaint";
+import FeedbackLog from "./pages/customer/FeedbackLog";
+import VerifyCSP from "./pages/customer/VerifyCSP";
+import TrackComplaint from "./pages/customer/TrackComplaint";
+
+// Army Welfare pages
+import ArmyFamilies from "./pages/army/ArmyFamilies";
+import SpecialPayouts from "./pages/army/SpecialPayouts";
+
 const queryClient = new QueryClient();
 
 // Helper function to create routes for each role
@@ -30,56 +77,62 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
     case 'admin':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="admin-csp-management" path={`${basePath}/csp-management`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">CSP Management</h1><p>Admin tool to manage CSP agents.</p></div>} />,
-        <Route key="admin-audit-assignment" path={`${basePath}/audit-assignment`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Audit Assignment</h1><p>Admin tool to assign audits to auditors.</p></div>} />,
-        <Route key="admin-fraud-engine" path={`${basePath}/fraud-engine`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Fraud Engine</h1><p>Admin tool to monitor and manage fraud detection.</p></div>} />,
-        <Route key="admin-audit-logs" path={`${basePath}/audit-logs`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Audit Trail Logs</h1><p>Admin tool to view audit logs.</p></div>} />,
-        <Route key="admin-notification-hub" path={`${basePath}/notification-hub`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Notification Hub</h1><p>Admin tool to manage notifications.</p></div>} />,
-        <Route key="admin-settings" path={`${basePath}/settings`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">System Settings</h1><p>Admin tool to configure system settings.</p></div>} />,
-        <Route key="admin-war-mode" path={`${basePath}/war-mode`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">War Mode Control</h1><p>Admin tool to manage war mode settings.</p></div>} />,
+        <Route key="admin-csp-management" path={`${basePath}/csp-management`} element={<CSPManagement />} />,
+        <Route key="admin-audit-assignment" path={`${basePath}/audit-assignment`} element={<AuditAssignment />} />,
+        <Route key="admin-fraud-engine" path={`${basePath}/fraud-engine`} element={<FraudEngine />} />,
+        <Route key="admin-audit-logs" path={`${basePath}/audit-logs`} element={<AuditTrailLogs />} />,
+        <Route key="admin-notification-hub" path={`${basePath}/notification-hub`} element={<NotificationHub />} />,
+        <Route key="admin-settings" path={`${basePath}/settings`} element={<SystemSettings />} />,
+        <Route key="admin-war-mode" path={`${basePath}/war-mode`} element={<WarModeControl />} />,
       ];
     case 'csp_agent':
     case 'fi_agent':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="agent-transactions" path={`${basePath}/transactions`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Live Transactions</h1><p>Agent tool to process transactions.</p></div>} />,
-        <Route key="agent-check-in" path={`${basePath}/check-in`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Facial Check-In</h1><p>Agent tool to complete facial verification.</p></div>} />,
-        <Route key="agent-device-status" path={`${basePath}/device-status`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Device Status</h1><p>Agent tool to check device status.</p></div>} />,
-        <Route key="agent-dispute" path={`${basePath}/dispute`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Dispute Center</h1><p>Agent tool to manage disputes.</p></div>} />,
-        <Route key="agent-reports" path={`${basePath}/reports`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Reports</h1><p>Agent tool to view reports.</p></div>} />,
-        <Route key="agent-war-mode" path={`${basePath}/war-mode`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">War Mode Tools</h1><p>Agent tools for emergency situations.</p></div>} />,
-        <Route key="agent-army-family" path={`${basePath}/army-family`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Army Family Panel</h1><p>Agent tools for army family services.</p></div>} />,
+        <Route key="agent-transactions" path={`${basePath}/transactions`} element={<Transactions />} />,
+        <Route key="agent-check-in" path={`${basePath}/check-in`} element={<FacialCheckIn />} />,
+        <Route key="agent-device-status" path={`${basePath}/device-status`} element={<DeviceStatus />} />,
+        <Route key="agent-dispute" path={`${basePath}/dispute`} element={<DisputeCenter />} />,
+        <Route key="agent-reports" path={`${basePath}/reports`} element={<AgentReports />} />,
+        <Route key="agent-war-mode" path={`${basePath}/war-mode`} element={<WarModeTools />} />,
+        <Route key="agent-army-family" path={`${basePath}/army-family`} element={<ArmyFamilyPanel />} />,
+        <Route key="agent-self-check" path={`${basePath}/self-check`} element={<MonthlySelfCheck />} />,
+        <Route key="agent-fraud-alerts" path={`${basePath}/fraud-alerts`} element={<FraudAlerts />} />,
       ];
     case 'auditor':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="auditor-tasks" path={`${basePath}/tasks`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Assigned Tasks</h1><p>Auditor tool to view assigned audit tasks.</p></div>} />,
-        <Route key="auditor-audit-form" path={`${basePath}/audit-form`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Audit Form</h1><p>Auditor tool to complete audit forms.</p></div>} />,
-        <Route key="auditor-visit-logs" path={`${basePath}/visit-logs`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Visit Logs</h1><p>Auditor tool to track visit logs.</p></div>} />,
-        <Route key="auditor-red-zone" path={`${basePath}/red-zone`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Red Zone Protocol</h1><p>Auditor tool for high-risk areas.</p></div>} />,
+        <Route key="auditor-tasks" path={`${basePath}/tasks`} element={<AuditorTasks />} />,
+        <Route key="auditor-audit-form" path={`${basePath}/audit-form`} element={<AuditForm />} />,
+        <Route key="auditor-visit-logs" path={`${basePath}/visit-logs`} element={<VisitLogs />} />,
+        <Route key="auditor-red-zone" path={`${basePath}/red-zone`} element={<RedZoneProtocol />} />,
+        <Route key="auditor-checklist" path={`${basePath}/live-visit`} element={<LiveVisitChecklist />} />,
       ];
     case 'bank_officer':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="bank-csp-registry" path={`${basePath}/csp-registry`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">CSP Registry</h1><p>Bank officer tool to view CSP registry.</p></div>} />,
-        <Route key="bank-fraud-dashboard" path={`${basePath}/fraud-dashboard`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Fraud Dashboard</h1><p>Bank officer tool to monitor fraud.</p></div>} />,
-        <Route key="bank-document-access" path={`${basePath}/document-access`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Document Access</h1><p>Bank officer tool to access documents.</p></div>} />,
-        <Route key="bank-decisions" path={`${basePath}/decisions`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Decision Panel</h1><p>Bank officer tool to make decisions.</p></div>} />,
-        <Route key="bank-reports" path={`${basePath}/reports`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Download Reports</h1><p>Bank officer tool to access reports.</p></div>} />,
-        <Route key="bank-military" path={`${basePath}/military`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Military Coordination</h1><p>Bank officer tool for military coordination.</p></div>} />,
+        <Route key="bank-csp-registry" path={`${basePath}/csp-registry`} element={<CSPRegistry />} />,
+        <Route key="bank-fraud-dashboard" path={`${basePath}/fraud-dashboard`} element={<FraudDashboard />} />,
+        <Route key="bank-document-access" path={`${basePath}/document-access`} element={<DocumentAccess />} />,
+        <Route key="bank-decisions" path={`${basePath}/decisions`} element={<DecisionPanel />} />,
+        <Route key="bank-reports" path={`${basePath}/reports`} element={<DownloadReports />} />,
+        <Route key="bank-military" path={`${basePath}/military`} element={<MilitaryCoordination />} />,
+        <Route key="bank-complaints" path={`${basePath}/complaints`} element={<CustomerComplaintsReview />} />,
       ];
     case 'customer':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="customer-verify" path={`${basePath}/verify`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Verify Fee</h1><p>Customer tool to verify transaction fees.</p></div>} />,
-        <Route key="customer-complaint" path={`${basePath}/complaint`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Submit Complaint</h1><p>Customer tool to submit complaints.</p></div>} />,
-        <Route key="customer-feedback" path={`${basePath}/feedback`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Feedback Log</h1><p>Customer tool to view feedback status.</p></div>} />,
+        <Route key="customer-verify" path={`${basePath}/verify`} element={<VerifyFee />} />,
+        <Route key="customer-complaint" path={`${basePath}/complaint`} element={<SubmitComplaint />} />,
+        <Route key="customer-feedback" path={`${basePath}/feedback`} element={<FeedbackLog />} />,
+        <Route key="customer-verify-csp" path={`${basePath}/verify-csp`} element={<VerifyCSP />} />,
+        <Route key="customer-track" path={`${basePath}/track`} element={<TrackComplaint />} />,
       ];
     case 'army_welfare_officer':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="army-families" path={`${basePath}/families`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Army Families</h1><p>Army welfare officer tool to manage army families.</p></div>} />,
-        <Route key="army-payouts" path={`${basePath}/payouts`} element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Special Payouts</h1><p>Army welfare officer tool to manage special payouts.</p></div>} />,
+        <Route key="army-families" path={`${basePath}/families`} element={<ArmyFamilies />} />,
+        <Route key="army-payouts" path={`${basePath}/payouts`} element={<SpecialPayouts />} />,
       ];
     default:
       return [];
@@ -102,6 +155,11 @@ const App = () => (
               <Route path="customer-corner" element={<CustomerCornerPage />} />
               <Route path="csr-impact" element={<CSRImpactPage />} />
               <Route path="contact" element={<ContactPage />} />
+              
+              {/* Public Customer Routes */}
+              <Route path="verify-csp" element={<VerifyCSP />} />
+              <Route path="submit-complaint" element={<SubmitComplaint />} />
+              <Route path="track-complaint" element={<TrackComplaint />} />
             </Route>
             
             {/* Login Route - outside of other layouts */}

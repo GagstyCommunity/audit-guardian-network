@@ -1,13 +1,14 @@
 
 import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ReactNode } from 'react';
-
-export interface Column<T> {
-  header: string;
-  accessorKey: keyof T | ((data: T) => ReactNode);
-  cell?: (row: T) => ReactNode;
-}
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { Column } from '@/utils/tableHelpers';
 
 interface DataTableProps<T> {
   data: T[];
@@ -16,33 +17,51 @@ interface DataTableProps<T> {
   emptyMessage?: string;
 }
 
-export function DataTable<T>({ data, columns, loading = false, emptyMessage = 'No data available' }: DataTableProps<T>) {
+export function DataTable<T>({ 
+  data, 
+  columns, 
+  loading = false, 
+  emptyMessage = "No data available" 
+}: DataTableProps<T>) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-32">
-        <div className="text-center">
-          <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
-        </div>
+      <div className="py-8 text-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+        <p className="mt-4 text-gray-500">Loading data...</p>
       </div>
     );
   }
 
-  if (!data.length) {
+  if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-32">
-        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+      <div className="py-8 text-center">
+        <p className="text-gray-500">{emptyMessage}</p>
       </div>
     );
   }
+
+  const renderCellContent = (row: T, column: Column<T>) => {
+    if (column.cell) {
+      return column.cell(row);
+    }
+    
+    if (typeof column.accessorKey === 'function') {
+      return column.accessorKey(row);
+    }
+    
+    const value = row[column.accessorKey as keyof T];
+    return value !== undefined && value !== null ? String(value) : '';
+  };
 
   return (
-    <div className="border rounded-md">
+    <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             {columns.map((column, index) => (
-              <TableHead key={index}>{column.header}</TableHead>
+              <TableHead key={index}>
+                {column.header}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
@@ -51,10 +70,7 @@ export function DataTable<T>({ data, columns, loading = false, emptyMessage = 'N
             <TableRow key={rowIndex}>
               {columns.map((column, colIndex) => (
                 <TableCell key={colIndex}>
-                  {column.cell ? column.cell(row) : 
-                    typeof column.accessorKey === 'function' 
-                      ? column.accessorKey(row)
-                      : String((row[column.accessorKey as keyof T] ?? ''))}
+                  {renderCellContent(row, column)}
                 </TableCell>
               ))}
             </TableRow>

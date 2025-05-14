@@ -1,58 +1,16 @@
+
 /// <reference types="vite/client" />
 
-// Workaround to allow dynamic table access in Supabase client
-declare namespace global {
-  interface SupabaseTablesAndViews {
-    [tableName: string]: any;
-  }
-}
-
-// Define interfaces for our data models
-interface CSPAgent {
-  id: string;
-  profile_id: string;
-  bank_id: string;
-  location_lat: number;
-  location_long: number;
-  address?: string;
-  district?: string;
-  state?: string;
-  status?: string;
-  risk_score?: number;
-  onboarded_at?: string;
-  last_face_verification?: string;
-  device_id?: string;
-  is_in_red_zone?: boolean;
-  is_army_service_provider?: boolean;
-  profile?: Profile;
-}
-
-interface Profile {
-  id: string;
-  name: string;
-  email: string;
-  role?: string;
-  avatar_url?: string;
-  phone_number?: string;
-  created_at?: string;
-  last_login?: string;
-  status?: string;
-  region?: string;
-  district?: string;
-  state?: string;
-}
-
+// Define Transaction interface
 interface Transaction {
   id: string;
-  csp_id: string;
-  transaction_type: string;
   amount: number;
+  type: string;
   status: string;
+  created_at: string;
+  updated_at: string;
   customer_name?: string;
   customer_id?: string;
-  transaction_date: string;
-  fee_charged?: number;
-  receipt_id: string;
   device_id?: string;
   location_lat?: number;
   location_long?: number;
@@ -65,130 +23,121 @@ interface Transaction {
 
 interface FaceVerification {
   id: string;
-  profile_id: string;
-  verification_type: string;
+  agent_id: string;
   verified_at: string;
-  success: boolean;
-  device_id?: string;
-  location_lat?: number;
-  location_long?: number;
-  failure_reason?: string;
-}
-
-interface Dispute {
-  id: string;
-  transaction_id?: string;
-  csp_id?: string;
-  customer_id?: string;
-  dispute_type: string;
-  description: string;
   status: string;
+  image_url?: string;
+  confidence_score?: number;
+  device_info?: {
+    device_id: string;
+    ip_address: string;
+    location?: {
+      latitude: number;
+      longitude: number;
+      accuracy: number;
+    }
+  };
   created_at: string;
-  resolved_at?: string;
-  resolved_by?: string;
-  resolution_notes?: string;
 }
 
-interface Audit {
+interface AuditTask {
   id: string;
+  auditor_id: string;
   csp_id: string;
-  auditor_id?: string;
-  assigned_at: string;
-  scheduled_for?: string;
   status: string;
-  completed_at?: string;
-  location_lat?: number;
-  location_long?: number;
-  face_verification_passed?: boolean;
-  device_verification_passed?: boolean;
-  location_verification_passed?: boolean;
+  assigned_date: string;
+  due_date: string;
+  completed_date?: string;
+  risk_level: string;
   notes?: string;
-  priority: number;
-  is_red_zone: boolean;
-  csp?: CSPAgent;
-  auditor?: Profile;
+  created_at: string;
+  updated_at: string;
+}
+
+interface AuditEvidence {
+  id: string;
+  audit_id: string;
+  type: "photo" | "video" | "audio" | "document";
+  url: string;
+  notes?: string;
+  created_at: string;
+}
+
+interface CSPProfile {
+  id: string;
+  bank_id: string;
+  user_id: string;
+  status: "pending_approval" | "active" | "suspended" | "blacklisted";
+  risk_score: number;
+  last_face_verification?: string;
+  is_in_red_zone: boolean;
+  is_army_service_provider: boolean;
+  created_at: string;
+  updated_at: string;
+  profile: {
+    name: string;
+    email: string;
+    phone_number: string;
+    region: string;
+    district: string;
+    state: string;
+  };
 }
 
 interface FraudAlert {
   id: string;
   csp_id: string;
-  detected_at: string;
+  transaction_id?: string;
   alert_type: string;
   description: string;
-  risk_level: string;
-  status: string;
-  reviewed_by?: string;
-  reviewed_at?: string;
-  action_taken?: string;
-  csp?: CSPAgent;
-}
-
-interface Notification {
-  id: string;
-  profile_id: string;
-  title: string;
-  message: string;
-  type?: string;
-  read: boolean;
+  detected_at: string;
+  risk_level: "low" | "medium" | "high" | "critical";
+  status: "open" | "in-progress" | "resolved" | "false-positive";
+  response?: {
+    response_text: string;
+    evidence_urls?: string[];
+    responded_at: string;
+  };
+  resolution?: {
+    resolution_text: string;
+    action_taken: string;
+    resolved_at: string;
+    resolved_by: string;
+  };
   created_at: string;
-  action_url?: string;
-}
-
-interface ArmyFamily {
-  id: string;
-  family_id: string;
-  primary_member_name: string;
-  service_number?: string;
-  status: string;
-  registered_at: string;
-  address?: string;
-  district?: string;
-  state?: string;
-  contact_number?: string;
-  associated_csp?: string;
-}
-
-interface SpecialPayout {
-  id: string;
-  family_id: string;
-  amount: number;
-  payout_type: string;
-  status: string;
-  approved_by?: string;
-  approved_at?: string;
-  processed_at?: string;
-  processed_by?: string;
-  notes?: string;
-}
-
-interface Feedback {
-  id: string;
-  customer_id?: string;
-  csp_id?: string;
-  rating?: number;
-  comments?: string;
-  submitted_at: string;
-  status: string;
-}
-
-interface SystemSetting {
-  id: number;
-  setting_name: string;
-  setting_value?: string;
-  description?: string;
   updated_at: string;
-  updated_by?: string;
 }
 
-interface RedZone {
+interface CustomerComplaint {
   id: string;
-  zone_name: string;
-  district: string;
-  state: string;
-  location_center_lat: number;
-  location_center_long: number;
-  radius_km?: number;
-  active: boolean;
+  csp_id: string;
+  customer_phone: string;
+  complaint_type: string;
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+  status: "open" | "in-progress" | "resolved" | "closed";
+  evidence_url?: string;
+  csp_response?: string;
+  resolution?: string;
   created_at: string;
+  updated_at: string;
+  resolved_at?: string;
+}
+
+interface MilitaryFamily {
+  id: string;
+  military_id: string;
+  military_person_name: string;
+  regiment_unit: string;
+  rank: string;
+  status: "active" | "on_deployment" | "retired";
+  family_members: {
+    name: string;
+    relationship: string;
+    has_access: boolean;
+  }[];
+  special_services: string[];
+  created_at: string;
+  updated_at: string;
   expires_at?: string;
 }

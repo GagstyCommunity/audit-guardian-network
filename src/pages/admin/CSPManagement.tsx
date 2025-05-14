@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -68,11 +69,11 @@ const CSPManagement: React.FC = () => {
                      action === 'suspend' ? 'suspended' : currentStatus;
                      
     try {
-      // Use type assertion with parentheses for dynamic table access
-      const { error } = await ((supabase
-        .from('csp_agents') as any)
+      // Use type assertion with any to bypass TypeScript's type checking
+      const query = supabase.from('csp_agents') as any;
+      const { error } = await query
         .update({ status: newStatus })
-        .eq('id', agentId));
+        .eq('id', agentId);
         
       if (error) throw error;
       

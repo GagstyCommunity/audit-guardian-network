@@ -27,7 +27,12 @@ import {
   UserPlus,
   HeartHandshake,
   Phone,
-  KeySquare
+  KeySquare,
+  Clock,
+  Shield,
+  Cog,
+  FileCheck,
+  Eye
 } from 'lucide-react';
 import { colorPalette } from '../../types/auth.types';
 
@@ -128,6 +133,24 @@ const Sidebar: React.FC = () => {
           roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
         },
         {
+          to: '/verify-csp',
+          icon: <Shield size={18} />,
+          label: 'Verify CSP',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/submit-complaint',
+          icon: <AlertCircle size={18} />,
+          label: 'Submit Complaint',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
+          to: '/track-complaint',
+          icon: <FileSearch size={18} />,
+          label: 'Track Complaint',
+          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+        },
+        {
           to: '/login',
           icon: <KeySquare size={18} />,
           label: 'Login',
@@ -209,8 +232,20 @@ const Sidebar: React.FC = () => {
           roles: ['csp_agent', 'fi_agent'],
         },
         {
+          to: '/agent/self-check',
+          icon: <Clock size={18} />,
+          label: 'Monthly Self-Check',
+          roles: ['csp_agent', 'fi_agent'],
+        },
+        {
+          to: '/agent/fraud-alerts',
+          icon: <AlertTriangle size={18} />,
+          label: 'Fraud Alerts',
+          roles: ['csp_agent', 'fi_agent'],
+        },
+        {
           to: '/agent/device-status',
-          icon: <AlertCircle size={18} />,
+          icon: <Cog size={18} />,
           label: 'Device Status',
           roles: ['csp_agent', 'fi_agent'],
         },
@@ -250,8 +285,14 @@ const Sidebar: React.FC = () => {
           roles: ['auditor'],
         },
         {
+          to: '/auditor/live-visit',
+          icon: <Eye size={18} />,
+          label: 'Live Visit Checklist',
+          roles: ['auditor'],
+        },
+        {
           to: '/auditor/audit-form',
-          icon: <FileText size={18} />,
+          icon: <FileCheck size={18} />,
           label: 'Audit Form',
           roles: ['auditor'],
         },
@@ -282,6 +323,12 @@ const Sidebar: React.FC = () => {
           to: '/bank/fraud-dashboard',
           icon: <AlertTriangle size={18} />,
           label: 'Fraud Dashboard',
+          roles: ['bank_officer'],
+        },
+        {
+          to: '/bank/complaints',
+          icon: <MessageSquare size={18} />,
+          label: 'Customer Complaints',
           roles: ['bank_officer'],
         },
         {
@@ -320,9 +367,21 @@ const Sidebar: React.FC = () => {
           roles: ['customer'],
         },
         {
+          to: '/customer/verify-csp',
+          icon: <Shield size={18} />,
+          label: 'Verify CSP',
+          roles: ['customer'],
+        },
+        {
           to: '/customer/complaint',
           icon: <MessageSquare size={18} />,
           label: 'Submit Complaint',
+          roles: ['customer'],
+        },
+        {
+          to: '/customer/track',
+          icon: <FileSearch size={18} />,
+          label: 'Track Complaint',
           roles: ['customer'],
         },
         {

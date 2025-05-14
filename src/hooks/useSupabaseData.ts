@@ -23,10 +23,9 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use type assertion with 'as any' to bypass TypeScript's type checking for dynamic table access
-      let query = (supabase
-        .from(tableName) as any)
-        .select(options?.select || '*');
+      // Use type assertion with any to bypass TypeScript's strict type checking
+      let query = supabase.from(tableName) as any;
+      query = query.select(options?.select || '*');
 
       if (options?.column && options.value !== undefined) {
         query = query.eq(options.column, options.value);
@@ -89,8 +88,8 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Use type assertion with 'as any' to bypass TypeScript's type checking for dynamic table access
-    const supabaseTable = (supabase.from(tableName) as any);
+    // Use type assertion with any to bypass TypeScript's strict type checking
+    const supabaseTable = supabase.from(tableName) as any;
     let query: any;
     
     if (type === 'insert') {
