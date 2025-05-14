@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -38,6 +37,11 @@ import {
   X
 } from 'lucide-react';
 import { colorPalette } from '../../types/auth.types';
+
+interface SidebarProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
 
 interface SidebarItemProps {
   to: string;
@@ -80,11 +84,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, end = false 
   );
 };
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { authState, isAuthorized } = useAuth();
   const { user } = authState;
   const [expandedSections, setExpandedSections] = useState<string[]>(['public', 'dashboard']);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
   
   // Close sidebar on mobile when navigating to a new page
@@ -102,10 +105,6 @@ const Sidebar: React.FC = () => {
         ? prev.filter(s => s !== section)
         : [...prev, section]
     );
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(prev => !prev);
   };
   
   // Define menu sections based on user role
@@ -433,15 +432,15 @@ const Sidebar: React.FC = () => {
   const MobileToggle = () => (
     <button
       className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-csp-blue text-white shadow-lg md:hidden"
-      onClick={toggleSidebar}
+      onClick={onToggle}
       aria-label="Toggle sidebar"
     >
-      {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      {isOpen ? <X size={24} /> : <Menu size={24} />}
     </button>
   );
 
   // If mobile and sidebar is closed, only show the toggle button
-  if (isMobile && !sidebarOpen) {
+  if (isMobile && !isOpen) {
     return <MobileToggle />;
   }
 
@@ -452,14 +451,14 @@ const Sidebar: React.FC = () => {
         className={cn(
           "flex h-full w-64 flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white p-4 transition-all duration-300",
           isMobile && "fixed left-0 top-0 z-40 shadow-lg",
-          isMobile && !sidebarOpen && "transform -translate-x-full"
+          isMobile && !isOpen && "transform -translate-x-full"
         )}
       >
         {/* Mobile close button inside sidebar */}
         {isMobile && (
           <div className="flex justify-end">
             <button 
-              onClick={toggleSidebar}
+              onClick={onToggle}
               className="rounded-full p-1 hover:bg-gray-100"
             >
               <X size={20} />
@@ -510,10 +509,10 @@ const Sidebar: React.FC = () => {
         })}
 
         {/* Mobile overlay backdrop */}
-        {isMobile && sidebarOpen && (
+        {isMobile && isOpen && (
           <div 
             className="fixed inset-0 z-30 bg-black bg-opacity-50"
-            onClick={toggleSidebar}
+            onClick={onToggle}
           />
         )}
       </div>

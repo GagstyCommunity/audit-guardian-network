@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -30,6 +31,11 @@ export function truncateText(text: string, maxLength: number): string {
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
+// Check if browser is Internet Explorer (has msSaveBlob)
+const isIE = (): boolean => {
+  return 'msSaveBlob' in navigator;
+};
+
 // CSV Export
 export function exportToCsv<T>(data: T[], filename: string) {
   if (!data || !data.length) return;
@@ -58,8 +64,9 @@ export function exportToCsv<T>(data: T[], filename: string) {
   const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   
-  if (navigator.msSaveBlob) { // IE 10+
-    navigator.msSaveBlob(blob, filename);
+  if (isIE()) { // IE 10+
+    // Use type assertion for IE-specific API
+    (navigator as any).msSaveBlob(blob, filename);
   } else {
     // Others
     const url = URL.createObjectURL(blob);

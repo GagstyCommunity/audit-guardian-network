@@ -22,6 +22,10 @@ import { Badge } from '@/components/ui/badge';
 import { useLocation } from 'react-router-dom';
 import { colorPalette } from '../../types/auth.types';
 
+interface HeaderProps {
+  onToggleSidebar: () => void;
+}
+
 const roleLabels: Record<string, string> = {
   admin: 'Administrator',
   csp_agent: 'CSP Agent',
@@ -33,7 +37,7 @@ const roleLabels: Record<string, string> = {
   guest: 'Guest'
 };
 
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const { authState, logout } = useAuth();
   const { user } = authState;
   const location = useLocation();
@@ -62,6 +66,7 @@ const Header: React.FC = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    onToggleSidebar(); // Call the passed function to toggle sidebar
   };
 
   return (
