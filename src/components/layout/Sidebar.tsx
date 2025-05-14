@@ -93,11 +93,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   // Close sidebar on mobile when navigating to a new page
   useEffect(() => {
     if (isMobile) {
-      setSidebarOpen(false);
-    } else {
-      setSidebarOpen(true);
+      // Use the onToggle prop to close sidebar if it's open
+      if (isOpen) {
+        onToggle();
+      }
     }
-  }, [isMobile]);
+  }, [isMobile, isOpen, onToggle]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => 
