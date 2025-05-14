@@ -1,20 +1,10 @@
 
-import React from 'react';
+import { ReactNode } from "react";
+import { Column } from "@/components/shared/DataTable";
 
-// Define custom column definition type that allows for flexible accessorKey
-export type ColumnDefinition<T> = {
-  header: string;
-  accessorKey: keyof T | ((data: T) => React.ReactNode);
-  cell?: (row: T) => React.ReactNode;
-};
-
-// Define Column type for DataTable
-export type Column<T> = {
-  header: string;
-  accessorKey: keyof T | ((data: T) => React.ReactNode);
-  cell?: (row: T) => React.ReactNode;
-};
-
-export function createColumns<T>(columnDefinitions: ColumnDefinition<T>[]): Column<T>[] {
-  return columnDefinitions;
+/**
+ * Helper function to create columns with proper typing
+ */
+export function createColumns<T>(columns: Array<Column<T>>): Array<Column<T>> {
+  return columns;
 }

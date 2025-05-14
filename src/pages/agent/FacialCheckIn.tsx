@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { FaceVerification, CSPAgent } from '@/types/agent.types';
 
 const FacialCheckIn: React.FC = () => {
   const { authState } = useAuth();

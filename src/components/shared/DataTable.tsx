@@ -1,58 +1,26 @@
+import React from "react";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { ReactNode } from "react";
 
-import React from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Column } from '@/utils/tableHelpers';
+export interface Column<T> {
+  header: string;
+  accessorKey: keyof T | ((data: T) => ReactNode);
+  cell?: (item: T) => ReactNode;
+}
 
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
-  emptyMessage?: string;
+  emptyState?: React.ReactNode;
 }
 
-export function DataTable<T>({ 
-  data, 
-  columns, 
-  loading = false, 
-  emptyMessage = "No data available" 
+export function DataTable<T>({
+  data,
+  columns,
+  loading = false,
+  emptyState,
 }: DataTableProps<T>) {
-  if (loading) {
-    return (
-      <div className="py-8 text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-        <p className="mt-4 text-gray-500">Loading data...</p>
-      </div>
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <div className="py-8 text-center">
-        <p className="text-gray-500">{emptyMessage}</p>
-      </div>
-    );
-  }
-
-  const renderCellContent = (row: T, column: Column<T>) => {
-    if (column.cell) {
-      return column.cell(row);
-    }
-    
-    if (typeof column.accessorKey === 'function') {
-      return column.accessorKey(row);
-    }
-    
-    const value = row[column.accessorKey as keyof T];
-    return value !== undefined && value !== null ? String(value) : '';
-  };
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -66,15 +34,33 @@ export function DataTable<T>({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((row, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {columns.map((column, colIndex) => (
-                <TableCell key={colIndex}>
-                  {renderCellContent(row, column)}
-                </TableCell>
-              ))}
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                Loading...
+              </TableCell>
             </TableRow>
-          ))}
+          ) : data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                {emptyState || "No results found."}
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.map((row, i) => (
+              <TableRow key={i}>
+                {columns.map((column, j) => (
+                  <TableCell key={j}>
+                    {column.cell
+                      ? column.cell(row)
+                      : typeof column.accessorKey === "function"
+                      ? column.accessorKey(row)
+                      : (row[column.accessorKey] as React.ReactNode)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

@@ -23,7 +23,7 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use type assertion with any to bypass TypeScript's strict type checking
+      // Use explicit any typing to bypass TypeScript's strict checks
       let query = supabase.from(tableName) as any;
       query = query.select(options?.select || '*');
 
@@ -88,7 +88,7 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Use type assertion with any to bypass TypeScript's strict type checking
+    // Explicitly cast to any to bypass TypeScript's strict checking
     const supabaseTable = supabase.from(tableName) as any;
     let query: any;
     
