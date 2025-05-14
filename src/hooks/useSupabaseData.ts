@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { PostgrestQueryBuilder } from '@supabase/supabase-js';
 
 export function useSupabaseData<T>(
   tableName: string, 
@@ -24,9 +23,8 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use explicit type assertion for Supabase query
-      // This bypasses TypeScript's strict table name checking
-      const query = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
+      // Use type assertion to bypass TypeScript's strict type checking without importing PostgrestQueryBuilder
+      const query = supabase.from(tableName) as any;
       let queryBuilder = query.select(options?.select || '*');
 
       if (options?.column && options.value !== undefined) {
@@ -90,8 +88,8 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Explicitly cast to any to bypass TypeScript's strict table name checking
-    const supabaseTable = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
+    // Use type assertion without importing PostgrestQueryBuilder
+    const supabaseTable = supabase.from(tableName) as any;
     let query: any;
     
     if (type === 'insert') {
