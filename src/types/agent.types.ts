@@ -11,6 +11,13 @@ export interface CSPAgent {
     name?: string;
     avatar?: string;
   };
+  // Adding fields to fix type errors
+  last_face_verification?: string;
+  location_lat?: number;
+  location_long?: number;
+  district?: string;
+  state?: string;
+  is_in_red_zone?: boolean;
 }
 
 export interface AgentEvent {
@@ -59,4 +66,13 @@ export interface FaceVerification {
   timestamp: string;
   match_percentage?: number;
   location?: string;
+  // Adding fields to fix type errors
+  profile_id?: string;
+  verification_type?: string;
+  device_id?: string;
+  verified_at?: string;
+  success?: boolean;
+  failure_reason?: string;
+  location_lat?: number;
+  location_long?: number;
 }
