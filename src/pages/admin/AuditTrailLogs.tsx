@@ -1,11 +1,14 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Calendar, Download, Filter, Search } from 'lucide-react';
+import { Calendar, Download, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { createColumns } from '@/utils/tableHelpers';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data - in a real app this would come from the database
 const mockLogs = Array(20).fill(0).map((_, i) => ({
@@ -27,6 +30,7 @@ const AuditTrailLogs: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<string>('all');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [logs, setLogs] = useState(mockLogs);
+  const { toast } = useToast();
 
   const filteredLogs = logs.filter(log => {
     const matchesSearch = 
@@ -44,11 +48,25 @@ const AuditTrailLogs: React.FC = () => {
     return format(date, 'PPp');
   };
 
-  const columns = [
+  const handleExport = () => {
+    toast({
+      title: "Export initiated",
+      description: "Your logs are being exported. Please wait.",
+    });
+    // In a real app, this would trigger an actual export
+    setTimeout(() => {
+      toast({
+        title: "Export complete",
+        description: "Your logs have been exported successfully.",
+      });
+    }, 2000);
+  };
+
+  const columns = createColumns([
     {
       header: 'Time',
       accessorKey: 'timestamp',
-      cell: (row: any) => (
+      cell: (row) => (
         <div className="flex items-center">
           <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
           <span>{formatDate(row.timestamp)}</span>
@@ -58,7 +76,7 @@ const AuditTrailLogs: React.FC = () => {
     {
       header: 'User',
       accessorKey: 'user',
-      cell: (row: any) => (
+      cell: (row) => (
         <div>
           <div className="font-medium">{row.user.name}</div>
           <div className="text-sm text-muted-foreground capitalize">{row.user.role.replace('_', ' ')}</div>
@@ -68,32 +86,39 @@ const AuditTrailLogs: React.FC = () => {
     {
       header: 'Action',
       accessorKey: 'action',
-      cell: (row: any) => (
+      cell: (row) => (
         <div className="capitalize">{row.action}</div>
       ),
     },
     {
       header: 'Resource',
       accessorKey: 'resource',
-      cell: (row: any) => (
+      cell: (row) => (
         <div className="capitalize">{row.resource}</div>
       ),
+      hideOnMobile: true,
     },
     {
       header: 'Details',
       accessorKey: 'details',
+      hideOnMobile: true,
     },
     {
       header: 'IP Address',
       accessorKey: 'ip_address',
+      hideOnMobile: true,
     },
-  ];
+  ]);
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-csp-navy">Audit Trail Logs</h1>
-        <Button variant="outline">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-csp-navy">Audit Trail Logs</h1>
+        <Button 
+          variant="outline"
+          onClick={handleExport}
+          className="bg-csp-blue text-white hover:bg-csp-blue/90 border-none"
+        >
           <Download className="mr-2 h-4 w-4" />
           Export Logs
         </Button>
@@ -105,20 +130,20 @@ const AuditTrailLogs: React.FC = () => {
           <CardDescription>Track all system activities and user actions</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <div className="flex items-center w-full md:w-auto">
-              <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+          <div className="flex flex-col space-y-4 mb-6">
+            <div className="flex items-center w-full relative">
+              <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search logs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-sm"
+                className="pl-10"
               />
             </div>
             
-            <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Select value={selectedAction} onValueChange={setSelectedAction}>
-                <SelectTrigger className="w-full md:w-[180px]">
+                <SelectTrigger>
                   <SelectValue placeholder="Filter by action" />
                 </SelectTrigger>
                 <SelectContent>
@@ -134,7 +159,7 @@ const AuditTrailLogs: React.FC = () => {
               </Select>
               
               <Select value={selectedRole} onValueChange={setSelectedRole}>
-                <SelectTrigger className="w-full md:w-[180px]">
+                <SelectTrigger>
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -152,7 +177,22 @@ const AuditTrailLogs: React.FC = () => {
             data={filteredLogs}
             columns={columns}
             loading={false}
-            emptyState="No logs found matching the filters"
+            emptyState={
+              <div className="flex flex-col items-center py-6">
+                <p className="text-muted-foreground mb-2">No logs found matching your filters</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedAction('all');
+                    setSelectedRole('all');
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            }
           />
         </CardContent>
       </Card>

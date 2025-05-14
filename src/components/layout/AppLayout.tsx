@@ -1,12 +1,13 @@
 
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types/auth.types';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
 import { Toaster } from '@/components/ui/toaster';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AppLayoutProps {
   requiredRoles?: UserRole[];
@@ -15,6 +16,23 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
   const { authState, isAuthorized } = useAuth();
   const { isLoading, isAuthenticated, user } = authState;
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const location = useLocation();
+
+  // Close sidebar on route change when on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [location.pathname, isMobile]);
+
+  // Toggle sidebar
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => !prev);
+  };
 
   // Check if user is loading
   if (isLoading) {
@@ -34,9 +52,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
     console.log("Development mode: Bypassing authentication check");
     return (
       <div className="flex h-screen flex-col bg-gray-50">
-        <Header />
+        <Header onToggleSidebar={toggleSidebar} />
         <div className="flex flex-1 overflow-hidden">
-          <Sidebar />
+          <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
           <main className="flex-1 overflow-y-auto p-4 md:p-6">
             <Outlet />
           </main>
@@ -62,9 +80,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
 
   return (
     <div className="flex h-screen flex-col bg-gray-50">
-      <Header />
+      <Header onToggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <Outlet />
         </main>

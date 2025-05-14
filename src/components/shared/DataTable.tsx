@@ -7,6 +7,8 @@ export interface Column<T> {
   header: string;
   accessorKey: keyof T | ((data: T) => ReactNode);
   cell?: (item: T) => ReactNode;
+  className?: string;
+  hideOnMobile?: boolean;
 }
 
 interface DataTableProps<T> {
@@ -22,13 +24,21 @@ export function DataTable<T>({
   loading = false,
   emptyState,
 }: DataTableProps<T>) {
+  // Filter out columns that should be hidden on mobile
+  const visibleColumns = React.useMemo(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return columns.filter(col => !col.hideOnMobile);
+    }
+    return columns;
+  }, [columns]);
+
   return (
-    <div className="rounded-md border">
+    <div className="w-full overflow-auto rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((column, index) => (
-              <TableHead key={index}>
+            {visibleColumns.map((column, index) => (
+              <TableHead key={index} className={column.className}>
                 {column.header}
               </TableHead>
             ))}
@@ -38,7 +48,10 @@ export function DataTable<T>({
           {loading ? (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                Loading...
+                <div className="flex justify-center items-center space-x-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                  <span>Loading...</span>
+                </div>
               </TableCell>
             </TableRow>
           ) : data.length === 0 ? (
@@ -49,9 +62,9 @@ export function DataTable<T>({
             </TableRow>
           ) : (
             data.map((row, i) => (
-              <TableRow key={i}>
-                {columns.map((column, j) => (
-                  <TableCell key={j}>
+              <TableRow key={i} className="hover:bg-muted/50">
+                {visibleColumns.map((column, j) => (
+                  <TableCell key={j} className={column.className}>
                     {column.cell
                       ? column.cell(row)
                       : typeof column.accessorKey === "function"
