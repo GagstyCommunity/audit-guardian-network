@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { mutateSupabaseData } from '@/hooks/useSupabaseData';
+import { PostgrestQueryBuilder } from '@supabase/supabase-js';
 
 // Types
 export interface CreateParams<T> {
@@ -69,8 +70,8 @@ export const api = {
   // Query records
   async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
     try {
-      // Use type assertion to bypass TypeScript's type checking
-      const supabaseTable = supabase.from(table) as any;
+      // Use explicit type assertion to bypass TypeScript's type checking
+      const supabaseTable = supabase.from(table) as unknown as PostgrestQueryBuilder<any, any, any>;
       let query = supabaseTable.select(select);
 
       if (column && value !== undefined) {

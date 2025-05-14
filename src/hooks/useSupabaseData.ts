@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { PostgrestQueryBuilder } from '@supabase/supabase-js';
 
 export function useSupabaseData<T>(
   tableName: string, 
@@ -23,26 +24,26 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use type assertion to handle TypeScript's strict type checking
-      // This is necessary because Supabase's TypeScript definitions don't match our dynamic usage
-      let query = supabase.from(tableName) as any;
-      query = query.select(options?.select || '*');
+      // Use explicit type assertion for Supabase query
+      // This bypasses TypeScript's strict table name checking
+      const query = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
+      let queryBuilder = query.select(options?.select || '*');
 
       if (options?.column && options.value !== undefined) {
-        query = query.eq(options.column, options.value);
+        queryBuilder = queryBuilder.eq(options.column, options.value);
       }
 
       if (options?.orderBy) {
-        query = query.order(options.orderBy.column, { 
+        queryBuilder = queryBuilder.order(options.orderBy.column, { 
           ascending: options.orderBy.ascending !== false 
         });
       }
 
       if (options?.limit) {
-        query = query.limit(options.limit);
+        queryBuilder = queryBuilder.limit(options.limit);
       }
 
-      const { data: responseData, error: responseError, count: responseCount } = await query;
+      const { data: responseData, error: responseError, count: responseCount } = await queryBuilder;
 
       if (responseError) {
         throw new Error(responseError.message);
@@ -89,8 +90,8 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Explicitly cast to any to bypass TypeScript's strict checking
-    const supabaseTable = supabase.from(tableName) as any;
+    // Explicitly cast to any to bypass TypeScript's strict table name checking
+    const supabaseTable = supabase.from(tableName) as unknown as PostgrestQueryBuilder<any, any, any>;
     let query: any;
     
     if (type === 'insert') {
