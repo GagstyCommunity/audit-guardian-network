@@ -24,7 +24,7 @@ export interface ChecklistItem {
   description: string;
   required: boolean;
   completed: boolean;
-  category: 'documentation' | 'verification' | 'equipment' | 'security' | 'compliance';
+  category: 'documentation' | 'verification' | 'equipment' | 'security' | 'compliance' | 'premises';
 }
 
 export interface AuditFormData {

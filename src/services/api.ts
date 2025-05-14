@@ -69,7 +69,7 @@ export const api = {
   // Query records
   async query<T>({ table, select = '*', column, value, order, limit, filters }: QueryParams): Promise<T[]> {
     try {
-      // Use simple type assertion to bypass TypeScript's type checking
+      // Use any type to bypass TypeScript's strict type checking
       const supabaseTable = supabase.from(table) as any;
       let query = supabaseTable.select(select);
 

@@ -23,9 +23,11 @@ export function useSupabaseData<T>(
     setError(null);
 
     try {
-      // Use type assertion to bypass TypeScript's strict type checking without importing PostgrestQueryBuilder
-      const query = supabase.from(tableName) as any;
-      let queryBuilder = query.select(options?.select || '*');
+      // Use any type to bypass TypeScript's strict type checking
+      let queryBuilder = supabase.from(tableName) as any;
+      
+      // Apply select
+      queryBuilder = queryBuilder.select(options?.select || '*');
 
       if (options?.column && options.value !== undefined) {
         queryBuilder = queryBuilder.eq(options.column, options.value);
@@ -88,7 +90,7 @@ export async function mutateSupabaseData<T>(
   }
 ) {
   try {
-    // Use type assertion without importing PostgrestQueryBuilder
+    // Use any type to bypass TypeScript's strict type checking
     const supabaseTable = supabase.from(tableName) as any;
     let query: any;
     
