@@ -14,6 +14,7 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
+  // Get auth state from context
   const { authState, isAuthorized } = useAuth();
   const { isLoading, isAuthenticated, user } = authState;
   const [sidebarOpen, setSidebarOpen] = useState(false);
