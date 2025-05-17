@@ -37,6 +37,7 @@ const DashboardSelector: React.FC = () => {
     case 'csp_agent':
     case 'fi_agent':
       return <CSPAgentDashboard />;
+    case 'field_auditor':
     case 'auditor':
       return <AuditorDashboard />;
     case 'bank_officer':

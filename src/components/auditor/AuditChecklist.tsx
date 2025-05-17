@@ -150,7 +150,8 @@ const AuditChecklist: React.FC<{ cspId: string; visitId: string }> = ({ cspId, v
       answers: {} as Record<string, 'yes' | 'no' | 'na'>,
       comments: {} as Record<string, string>,
       photos: [] as File[],
-      location: { latitude: 0, longitude: 0 }
+      location: { latitude: 0, longitude: 0 },
+      finalComments: '' // Add finalComments to the form's defaultValues
     }
   });
   
@@ -314,10 +315,20 @@ const AuditChecklist: React.FC<{ cspId: string; visitId: string }> = ({ cspId, v
             {/* Final Comments */}
             <div>
               <h3 className="font-medium">Additional Comments</h3>
-              <Textarea 
-                placeholder="Add any additional observations or comments about this audit..."
-                className="mt-2"
-                {...form.register('finalComments')}
+              <FormField
+                control={form.control}
+                name="finalComments"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Add any additional observations or comments about this audit..."
+                        className="mt-2"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
             </div>
           </div>

@@ -35,10 +35,10 @@ interface DemoUser {
 
 const demoUsers: DemoUser[] = [
   { role: 'admin', email: 'admin@example.com', name: 'Admin User' },
-  { role: 'csp_agent', email: 'cspagent@example.com', name: 'CSP Agent' },
+  { role: 'csp_agent', email: 'csp@example.com', name: 'CSP Agent' },
   { role: 'fi_agent', email: 'fiagent@example.com', name: 'FI Agent' },
   { role: 'auditor', email: 'auditor@example.com', name: 'Auditor User' },
-  { role: 'bank_officer', email: 'bankofficer@example.com', name: 'Bank Officer' },
+  { role: 'bank_officer', email: 'bank@example.com', name: 'Bank Officer' },
   { role: 'customer', email: 'customer@example.com', name: 'Customer User' },
   { role: 'army_welfare_officer', email: 'armywelfare@example.com', name: 'Army Welfare Officer' },
 ];

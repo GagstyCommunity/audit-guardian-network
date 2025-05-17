@@ -10,6 +10,10 @@ export type UserRole =
   | 'hr'
   | 'customer_support'
   | 'bank_officer'
+  | 'fi_agent'
+  | 'auditor'
+  | 'customer'
+  | 'army_welfare_officer'
   | 'guest';
 
 export interface User {
