@@ -46,6 +46,36 @@ const DashboardSelector: React.FC = () => {
       return <CustomerDashboard />;
     case 'army_welfare_officer':
       return <ArmyWelfareDashboard />;
+    case 'cluster_manager':
+      return <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Cluster Manager Dashboard</h2>
+        <p>This dashboard provides tools to manage CSPs and auditors in your region.</p>
+      </div>;
+    case 'ops_training':
+      return <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Operations & Training Dashboard</h2>
+        <p>This dashboard provides tools for KYC verification, onboarding, and training management.</p>
+      </div>;
+    case 'compliance':
+      return <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Compliance Dashboard</h2>
+        <p>This dashboard provides tools to review audit results and manage fraud alerts.</p>
+      </div>;
+    case 'it_infra':
+      return <div className="space-y-6">
+        <h2 className="text-2xl font-bold">IT Infrastructure Dashboard</h2>
+        <p>This dashboard provides tools to monitor device status and manage gadget requests.</p>
+      </div>;
+    case 'hr':
+      return <div className="space-y-6">
+        <h2 className="text-2xl font-bold">HR Dashboard</h2>
+        <p>This dashboard provides tools to manage profiles and view leaderboard history.</p>
+      </div>;
+    case 'customer_support':
+      return <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Customer Support Dashboard</h2>
+        <p>This dashboard provides tools to manage customer complaints and support requests.</p>
+      </div>;
     default:
       return <div>No dashboard available for your role.</div>;
   }

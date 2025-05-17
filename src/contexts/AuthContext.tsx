@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AuthState, User, UserRole } from '../types/auth.types';
 
@@ -45,11 +44,43 @@ const MOCK_USERS: Record<string, User> = {
     rankWeekly: 4,
     rankMonthly: 12
   },
-  'auditor@example.com': {
+  'fiagent@example.com': {
+    id: '3',
+    name: 'FI Agent',
+    email: 'fiagent@example.com',
+    role: 'fi_agent',
+    avatar: '/assets/avatars/fiagent.png',
+    riskScore: 10,
+    status: 'active',
+    region: 'South',
+    lastLogin: new Date(),
+    createdAt: new Date('2023-03-10'),
+    rewardsPoints: 1450,
+    complianceScore: 89,
+    rankWeekly: 8,
+    rankMonthly: 15
+  },
+  'field@example.com': {
     id: '4',
     name: 'Field Auditor',
-    email: 'auditor@example.com',
+    email: 'field@example.com',
     role: 'field_auditor',
+    avatar: '/assets/avatars/field.png',
+    riskScore: 5,
+    status: 'active',
+    region: 'West',
+    lastLogin: new Date(),
+    createdAt: new Date('2023-04-05'),
+    rewardsPoints: 2100,
+    complianceScore: 96,
+    rankWeekly: 3,
+    rankMonthly: 4
+  },
+  'auditor@example.com': {
+    id: '5',
+    name: 'Auditor User',
+    email: 'auditor@example.com',
+    role: 'auditor',
     avatar: '/assets/avatars/auditor.png',
     riskScore: 5,
     status: 'active',
@@ -62,7 +93,7 @@ const MOCK_USERS: Record<string, User> = {
     rankMonthly: 3
   },
   'cluster@example.com': {
-    id: '8',
+    id: '6',
     name: 'Cluster Manager',
     email: 'cluster@example.com',
     role: 'cluster_manager',
@@ -73,7 +104,7 @@ const MOCK_USERS: Record<string, User> = {
     createdAt: new Date('2023-01-15'),
   },
   'ops@example.com': {
-    id: '9',
+    id: '7',
     name: 'Operations & Training',
     email: 'ops@example.com',
     role: 'ops_training',
@@ -84,7 +115,7 @@ const MOCK_USERS: Record<string, User> = {
     createdAt: new Date('2023-02-10'),
   },
   'compliance@example.com': {
-    id: '10',
+    id: '8',
     name: 'Compliance Officer',
     email: 'compliance@example.com',
     role: 'compliance',
@@ -95,7 +126,7 @@ const MOCK_USERS: Record<string, User> = {
     createdAt: new Date('2023-03-05'),
   },
   'it@example.com': {
-    id: '11',
+    id: '9',
     name: 'IT Support',
     email: 'it@example.com',
     role: 'it_infra',
@@ -106,7 +137,7 @@ const MOCK_USERS: Record<string, User> = {
     createdAt: new Date('2023-01-20'),
   },
   'hr@example.com': {
-    id: '12',
+    id: '10',
     name: 'HR Personnel',
     email: 'hr@example.com',
     role: 'hr',
@@ -117,7 +148,7 @@ const MOCK_USERS: Record<string, User> = {
     createdAt: new Date('2023-02-01'),
   },
   'support@example.com': {
-    id: '13',
+    id: '11',
     name: 'Customer Support',
     email: 'support@example.com',
     role: 'customer_support',
@@ -128,7 +159,7 @@ const MOCK_USERS: Record<string, User> = {
     createdAt: new Date('2023-03-15'),
   },
   'bank@example.com': {
-    id: '5',
+    id: '12',
     name: 'Bank Officer',
     email: 'bank@example.com',
     role: 'bank_officer',
@@ -139,6 +170,28 @@ const MOCK_USERS: Record<string, User> = {
     lastLogin: new Date(),
     createdAt: new Date('2023-05-20'),
   },
+  'customer@example.com': {
+    id: '13',
+    name: 'Customer',
+    email: 'customer@example.com',
+    role: 'customer',
+    avatar: '/assets/avatars/customer.png',
+    status: 'active',
+    region: 'North',
+    lastLogin: new Date(),
+    createdAt: new Date('2023-06-15'),
+  },
+  'armywelfare@example.com': {
+    id: '14',
+    name: 'Army Welfare Officer',
+    email: 'armywelfare@example.com',
+    role: 'army_welfare_officer',
+    avatar: '/assets/avatars/army.png',
+    status: 'active',
+    region: 'Army Cantonments',
+    lastLogin: new Date(),
+    createdAt: new Date('2023-07-01'),
+  }
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
