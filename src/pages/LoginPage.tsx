@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types/auth.types';
@@ -26,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { colorPalette } from '../types/auth.types';
+import { useToast } from '@/hooks/use-toast';
 
 interface DemoUser {
   role: UserRole;
@@ -55,8 +55,17 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { authState, login } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (authState.isAuthenticated && authState.user) {
+      console.log("User is already authenticated, redirecting to dashboard");
+      navigate('/dashboard');
+    }
+  }, [authState.isAuthenticated, authState.user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,8 +74,14 @@ const LoginPage: React.FC = () => {
 
     try {
       await login(email, password);
+      toast({
+        title: "Login successful",
+        description: "Welcome back!",
+      });
+      console.log("Login successful, redirecting to dashboard");
       navigate('/dashboard');
     } catch (err) {
+      console.error("Login error:", err);
       setError('Invalid email or password. For demo, use any email with password "password".');
     } finally {
       setIsLoading(false);

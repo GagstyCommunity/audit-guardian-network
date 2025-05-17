@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types/auth.types';
 
@@ -19,6 +19,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Close sidebar on route change when on mobile
   useEffect(() => {
@@ -46,26 +47,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
     );
   }
 
-  // For development/testing purposes, allow access even if not authenticated
-  // REMOVE THIS IN PRODUCTION
-  if (!isAuthenticated && process.env.NODE_ENV === 'development') {
-    console.log("Development mode: Bypassing authentication check");
-    return (
-      <div className="flex h-screen flex-col bg-gray-50">
-        <Header onToggleSidebar={toggleSidebar} />
-        <div className="flex flex-1 overflow-hidden">
-          <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">
-            <Outlet />
-          </main>
-        </div>
-        <Toaster />
-      </div>
-    );
-  }
-
   // Check if user is not authenticated
   if (!isAuthenticated) {
+    console.log("User is not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
@@ -77,6 +61,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
     });
     return <Navigate to="/unauthorized" replace />;
   }
+
+  // For debugging - log current user and path
+  console.log(`Authenticated as ${user?.name} (${user?.role}) at path: ${location.pathname}`);
 
   return (
     <div className="flex h-screen flex-col bg-gray-50">

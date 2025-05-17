@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AuthState, User, UserRole } from '../types/auth.types';
 
@@ -212,6 +213,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           isAuthenticated: true,
           isLoading: false,
         });
+        console.log("Restored authentication state from localStorage:", user);
       } catch (error) {
         console.error('Failed to parse saved user:', error);
         localStorage.removeItem('cspUser');
@@ -240,15 +242,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             lastLogin: new Date(),
           };
           
-          setAuthState({
+          const newAuthState = {
             user: updatedUser,
             isAuthenticated: true,
             isLoading: false,
-          });
+          };
           
+          setAuthState(newAuthState);
+          
+          // Store user in localStorage
           localStorage.setItem('cspUser', JSON.stringify(updatedUser));
+          console.log("User authenticated and saved to localStorage:", updatedUser);
           resolve();
         } else {
+          console.error("Authentication failed for email:", lowercaseEmail);
           reject(new Error('Invalid credentials'));
         }
       }, 1000); // Simulate network delay
@@ -256,6 +263,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
+    console.log("Logging out user");
     setAuthState({
       user: null,
       isAuthenticated: false,
