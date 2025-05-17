@@ -2,11 +2,14 @@
 export type UserRole = 
   | 'admin'
   | 'csp_agent'
-  | 'fi_agent'
-  | 'auditor'
+  | 'field_auditor'
+  | 'cluster_manager'
+  | 'ops_training'
+  | 'compliance'
+  | 'it_infra'
+  | 'hr'
+  | 'customer_support'
   | 'bank_officer'
-  | 'customer'
-  | 'army_welfare_officer'
   | 'guest';
 
 export interface User {
@@ -20,6 +23,10 @@ export interface User {
   region?: string;
   lastLogin?: Date;
   createdAt: Date;
+  rewardsPoints?: number;
+  complianceScore?: number;
+  rankWeekly?: number;
+  rankMonthly?: number;
 }
 
 export interface AuthState {

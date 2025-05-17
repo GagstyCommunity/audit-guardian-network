@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -34,7 +35,15 @@ import {
   FileCheck,
   Eye,
   Menu,
-  X
+  X,
+  Award,
+  Package,
+  Wrench,
+  User,
+  Laptop,
+  BookOpen,
+  Building,
+  Headset
 } from 'lucide-react';
 import { colorPalette } from '../../types/auth.types';
 
@@ -117,56 +126,56 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           to: '/',
           icon: <Home size={18} />,
           label: 'Home',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
           end: true
         },
         {
           to: '/how-it-works',
           icon: <HelpCircle size={18} />,
           label: 'How It Works',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/become-csp',
           icon: <UserPlus size={18} />,
           label: 'Become a CSP',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/customer-corner',
           icon: <MessageSquare size={18} />,
           label: 'Customer Corner',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/csr-impact',
           icon: <HeartHandshake size={18} />,
           label: 'CSR Impact',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/contact',
           icon: <Phone size={18} />,
           label: 'Contact/Helpline',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/verify-csp',
           icon: <Shield size={18} />,
           label: 'Verify CSP',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/submit-complaint',
           icon: <AlertCircle size={18} />,
           label: 'Submit Complaint',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/track-complaint',
           icon: <FileSearch size={18} />,
           label: 'Track Complaint',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'customer', 'army_welfare_officer', 'guest'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
         },
         {
           to: '/login',
@@ -183,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           to: '/dashboard',
           icon: <BarChart3 size={18} />,
           label: 'Dashboard',
-          roles: ['admin', 'csp_agent', 'fi_agent', 'auditor', 'bank_officer', 'army_welfare_officer'],
+          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer'],
         }
       ]
     },
@@ -232,99 +241,309 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           label: 'War Mode Control',
           roles: ['admin'],
         },
+        {
+          to: '/admin/role-management',
+          icon: <User size={18} />,
+          label: 'Role Management',
+          roles: ['admin'],
+        },
+        {
+          to: '/admin/leaderboard-management',
+          icon: <Award size={18} />,
+          label: 'Leaderboard Management',
+          roles: ['admin'],
+        },
       ]
     },
     {
-      title: 'CSP/FI Agent',
+      title: 'CSP Agent',
       items: [
         {
-          to: '/agent/transactions',
+          to: '/csp/transactions',
           icon: <ShieldCheck size={18} />,
           label: 'Live Transactions',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/check-in',
+          to: '/csp/check-in',
           icon: <UserCog size={18} />,
           label: 'Facial Check-In',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/self-check',
+          to: '/csp/self-audit',
           icon: <Clock size={18} />,
           label: 'Monthly Self-Check',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/fraud-alerts',
+          to: '/csp/fraud-alerts',
           icon: <AlertTriangle size={18} />,
           label: 'Fraud Alerts',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/device-status',
+          to: '/csp/device-status',
           icon: <Cog size={18} />,
           label: 'Device Status',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/dispute',
+          to: '/csp/rewards',
+          icon: <Award size={18} />,
+          label: 'Rewards & Leaderboard',
+          roles: ['csp_agent'],
+        },
+        {
+          to: '/csp/gadget-center',
+          icon: <Package size={18} />,
+          label: 'Gadget Center',
+          roles: ['csp_agent'],
+        },
+        {
+          to: '/csp/dispute',
           icon: <MessageSquare size={18} />,
           label: 'Dispute Center',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/reports',
+          to: '/csp/reports',
           icon: <FileText size={18} />,
           label: 'Reports',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
         {
-          to: '/agent/war-mode',
+          to: '/csp/war-mode',
           icon: <AlertCircle size={18} />,
           label: 'War Mode Tools',
-          roles: ['csp_agent', 'fi_agent'],
-        },
-        {
-          to: '/agent/army-family',
-          icon: <Users size={18} />,
-          label: 'Army Family Panel',
-          roles: ['csp_agent', 'fi_agent'],
+          roles: ['csp_agent'],
         },
       ]
     },
     {
-      title: 'Auditor',
+      title: 'Field Auditor',
       items: [
         {
           to: '/auditor/tasks',
           icon: <CheckSquare size={18} />,
           label: 'Assigned Tasks',
-          roles: ['auditor'],
+          roles: ['field_auditor'],
         },
         {
           to: '/auditor/live-visit',
           icon: <Eye size={18} />,
           label: 'Live Visit Checklist',
-          roles: ['auditor'],
+          roles: ['field_auditor'],
         },
         {
           to: '/auditor/audit-form',
           icon: <FileCheck size={18} />,
-          label: 'Audit Form',
-          roles: ['auditor'],
+          label: 'Audit Checklist Form',
+          roles: ['field_auditor'],
         },
         {
           to: '/auditor/visit-logs',
           icon: <MapPin size={18} />,
           label: 'Visit Logs',
-          roles: ['auditor'],
+          roles: ['field_auditor'],
+        },
+        {
+          to: '/auditor/rewards',
+          icon: <Award size={18} />,
+          label: 'Rewards & Leaderboard',
+          roles: ['field_auditor'],
         },
         {
           to: '/auditor/red-zone',
           icon: <AlertCircle size={18} />,
           label: 'Red Zone Protocol',
-          roles: ['auditor'],
+          roles: ['field_auditor'],
+        },
+      ]
+    },
+    {
+      title: 'Cluster Manager',
+      items: [
+        {
+          to: '/cluster-manager/csp-monitoring',
+          icon: <Users size={18} />,
+          label: 'CSP Monitoring',
+          roles: ['cluster_manager'],
+        },
+        {
+          to: '/cluster-manager/auditor-monitoring',
+          icon: <CheckSquare size={18} />,
+          label: 'Auditor Monitoring',
+          roles: ['cluster_manager'],
+        },
+        {
+          to: '/cluster-manager/checklist-editor',
+          icon: <Wrench size={18} />,
+          label: 'Checklist Editor',
+          roles: ['cluster_manager'],
+        },
+        {
+          to: '/cluster-manager/onboarding',
+          icon: <UserPlus size={18} />,
+          label: 'CSP Onboarding',
+          roles: ['cluster_manager'],
+        },
+        {
+          to: '/cluster-manager/leaderboard',
+          icon: <Award size={18} />,
+          label: 'Leaderboard Moderation',
+          roles: ['cluster_manager'],
+        },
+        {
+          to: '/cluster-manager/compliance',
+          icon: <Shield size={18} />,
+          label: 'Compliance Overview',
+          roles: ['cluster_manager'],
+        },
+      ]
+    },
+    {
+      title: 'Ops/Training',
+      items: [
+        {
+          to: '/ops/kyc-verification',
+          icon: <FileCheck size={18} />,
+          label: 'KYC Verification',
+          roles: ['ops_training'],
+        },
+        {
+          to: '/ops/gadget-management',
+          icon: <Package size={18} />,
+          label: 'Gadget Management',
+          roles: ['ops_training'],
+        },
+        {
+          to: '/ops/training-tasks',
+          icon: <BookOpen size={18} />,
+          label: 'Training Tasks',
+          roles: ['ops_training'],
+        },
+        {
+          to: '/ops/e-learning',
+          icon: <Laptop size={18} />,
+          label: 'E-Learning Management',
+          roles: ['ops_training'],
+        },
+      ]
+    },
+    {
+      title: 'Compliance',
+      items: [
+        {
+          to: '/compliance/audit-results',
+          icon: <FileSearch size={18} />,
+          label: 'Audit Results',
+          roles: ['compliance'],
+        },
+        {
+          to: '/compliance/csp-lockdown',
+          icon: <Shield size={18} />,
+          label: 'CSP Lockdown',
+          roles: ['compliance'],
+        },
+        {
+          to: '/compliance/fraud-resolution',
+          icon: <AlertTriangle size={18} />,
+          label: 'Fraud Resolution',
+          roles: ['compliance'],
+        },
+        {
+          to: '/compliance/csp-scoring',
+          icon: <BarChart3 size={18} />,
+          label: 'CSP Scoring',
+          roles: ['compliance'],
+        },
+        {
+          to: '/compliance/sla-tracker',
+          icon: <Clock size={18} />,
+          label: 'SLA Tracker',
+          roles: ['compliance'],
+        },
+      ]
+    },
+    {
+      title: 'IT/Infra',
+      items: [
+        {
+          to: '/it/device-status',
+          icon: <Laptop size={18} />,
+          label: 'Device Status',
+          roles: ['it_infra'],
+        },
+        {
+          to: '/it/gadget-requests',
+          icon: <Package size={18} />,
+          label: 'Gadget Requests',
+          roles: ['it_infra'],
+        },
+        {
+          to: '/it/app-versions',
+          icon: <Settings size={18} />,
+          label: 'App Versions',
+          roles: ['it_infra'],
+        },
+        {
+          to: '/it/device-health',
+          icon: <Cog size={18} />,
+          label: 'Device Health',
+          roles: ['it_infra'],
+        },
+      ]
+    },
+    {
+      title: 'HR Panel',
+      items: [
+        {
+          to: '/hr/profiles',
+          icon: <Users size={18} />,
+          label: 'Profile Management',
+          roles: ['hr'],
+        },
+        {
+          to: '/hr/leaderboard-history',
+          icon: <Award size={18} />,
+          label: 'Leaderboard History',
+          roles: ['hr'],
+        },
+        {
+          to: '/hr/payroll',
+          icon: <ReceiptText size={18} />,
+          label: 'Payroll Sync',
+          roles: ['hr'],
+        },
+        {
+          to: '/hr/documents',
+          icon: <FileText size={18} />,
+          label: 'Document Upload',
+          roles: ['hr'],
+        },
+      ]
+    },
+    {
+      title: 'Customer Support',
+      items: [
+        {
+          to: '/support/complaints',
+          icon: <MessageSquare size={18} />,
+          label: 'Complaints',
+          roles: ['customer_support'],
+        },
+        {
+          to: '/support/resolution',
+          icon: <CheckSquare size={18} />,
+          label: 'Resolution Center',
+          roles: ['customer_support'],
+        },
+        {
+          to: '/support/army-fastlane',
+          icon: <HeartHandshake size={18} />,
+          label: 'Army Fast-Lane',
+          roles: ['customer_support'],
         },
       ]
     },
@@ -366,64 +585,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           icon: <Download size={18} />,
           label: 'Download Reports',
           roles: ['bank_officer'],
-        },
-        {
-          to: '/bank/military',
-          icon: <Users size={18} />,
-          label: 'Military Coordination',
-          roles: ['bank_officer'],
-        },
-      ]
-    },
-    {
-      title: 'Customer',
-      items: [
-        {
-          to: '/customer/verify',
-          icon: <ReceiptText size={18} />,
-          label: 'Verify Fee',
-          roles: ['customer'],
-        },
-        {
-          to: '/customer/verify-csp',
-          icon: <Shield size={18} />,
-          label: 'Verify CSP',
-          roles: ['customer'],
-        },
-        {
-          to: '/customer/complaint',
-          icon: <MessageSquare size={18} />,
-          label: 'Submit Complaint',
-          roles: ['customer'],
-        },
-        {
-          to: '/customer/track',
-          icon: <FileSearch size={18} />,
-          label: 'Track Complaint',
-          roles: ['customer'],
-        },
-        {
-          to: '/customer/feedback',
-          icon: <FileText size={18} />,
-          label: 'Feedback Log',
-          roles: ['customer'],
-        },
-      ]
-    },
-    {
-      title: 'Army Welfare',
-      items: [
-        {
-          to: '/army/families',
-          icon: <Users size={18} />,
-          label: 'Army Families',
-          roles: ['army_welfare_officer'],
-        },
-        {
-          to: '/army/payouts',
-          icon: <Download size={18} />,
-          label: 'Special Payouts',
-          roles: ['army_welfare_officer'],
         },
       ]
     },

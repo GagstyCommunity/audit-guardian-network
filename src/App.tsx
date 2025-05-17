@@ -31,18 +31,17 @@ import NotificationHub from "./pages/admin/NotificationHub";
 import SystemSettings from "./pages/admin/SystemSettings";
 import WarModeControl from "./pages/admin/WarModeControl";
 
-// Agent pages
+// CSP Agent pages
 import Transactions from "./pages/agent/Transactions";
 import FacialCheckIn from "./pages/agent/FacialCheckIn";
 import DeviceStatus from "./pages/agent/DeviceStatus";
 import DisputeCenter from "./pages/agent/DisputeCenter";
 import AgentReports from "./pages/agent/AgentReports";
 import WarModeTools from "./pages/agent/WarModeTools";
-import ArmyFamilyPanel from "./pages/agent/ArmyFamilyPanel";
 import MonthlySelfCheck from "./pages/agent/MonthlySelfCheck";
 import FraudAlerts from "./pages/agent/FraudAlerts";
 
-// Auditor pages
+// Field Auditor pages
 import AuditorTasks from "./pages/auditor/AuditorTasks";
 import AuditForm from "./pages/auditor/AuditForm";
 import VisitLogs from "./pages/auditor/VisitLogs";
@@ -65,9 +64,15 @@ import FeedbackLog from "./pages/customer/FeedbackLog";
 import VerifyCSP from "./pages/customer/VerifyCSP";
 import TrackComplaint from "./pages/customer/TrackComplaint";
 
-// Army Welfare pages
-import ArmyFamilies from "./pages/army/ArmyFamilies";
-import SpecialPayouts from "./pages/army/SpecialPayouts";
+// New pages for CSP 
+import RewardsDashboard from "./pages/csp/RewardsDashboard";
+import GadgetCenter from "./pages/csp/GadgetCenter";
+
+// New page for Auditor
+import AuditChecklist from "./components/auditor/AuditChecklist";
+
+// Cluster Manager pages
+import ChecklistEditor from "./pages/cluster-manager/ChecklistEditor";
 
 const queryClient = new QueryClient();
 
@@ -86,20 +91,20 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key="admin-war-mode" path={`${basePath}/war-mode`} element={<WarModeControl />} />,
       ];
     case 'csp_agent':
-    case 'fi_agent':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="agent-transactions" path={`${basePath}/transactions`} element={<Transactions />} />,
-        <Route key="agent-check-in" path={`${basePath}/check-in`} element={<FacialCheckIn />} />,
-        <Route key="agent-device-status" path={`${basePath}/device-status`} element={<DeviceStatus />} />,
-        <Route key="agent-dispute" path={`${basePath}/dispute`} element={<DisputeCenter />} />,
-        <Route key="agent-reports" path={`${basePath}/reports`} element={<AgentReports />} />,
-        <Route key="agent-war-mode" path={`${basePath}/war-mode`} element={<WarModeTools />} />,
-        <Route key="agent-army-family" path={`${basePath}/army-family`} element={<ArmyFamilyPanel />} />,
-        <Route key="agent-self-check" path={`${basePath}/self-check`} element={<MonthlySelfCheck />} />,
-        <Route key="agent-fraud-alerts" path={`${basePath}/fraud-alerts`} element={<FraudAlerts />} />,
+        <Route key="csp-transactions" path={`${basePath}/transactions`} element={<Transactions />} />,
+        <Route key="csp-check-in" path={`${basePath}/check-in`} element={<FacialCheckIn />} />,
+        <Route key="csp-device-status" path={`${basePath}/device-status`} element={<DeviceStatus />} />,
+        <Route key="csp-dispute" path={`${basePath}/dispute`} element={<DisputeCenter />} />,
+        <Route key="csp-reports" path={`${basePath}/reports`} element={<AgentReports />} />,
+        <Route key="csp-war-mode" path={`${basePath}/war-mode`} element={<WarModeTools />} />,
+        <Route key="csp-self-check" path={`${basePath}/self-audit`} element={<MonthlySelfCheck />} />,
+        <Route key="csp-fraud-alerts" path={`${basePath}/fraud-alerts`} element={<FraudAlerts />} />,
+        <Route key="csp-rewards" path={`${basePath}/rewards`} element={<RewardsDashboard />} />,
+        <Route key="csp-gadget-center" path={`${basePath}/gadget-center`} element={<GadgetCenter />} />,
       ];
-    case 'auditor':
+    case 'field_auditor':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
         <Route key="auditor-tasks" path={`${basePath}/tasks`} element={<AuditorTasks />} />,
@@ -107,6 +112,32 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key="auditor-visit-logs" path={`${basePath}/visit-logs`} element={<VisitLogs />} />,
         <Route key="auditor-red-zone" path={`${basePath}/red-zone`} element={<RedZoneProtocol />} />,
         <Route key="auditor-checklist" path={`${basePath}/live-visit`} element={<LiveVisitChecklist />} />,
+        <Route key="auditor-rewards" path={`${basePath}/rewards`} element={<RewardsDashboard />} />,
+      ];
+    case 'cluster_manager':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+        <Route key="cluster-checklist-editor" path={`${basePath}/checklist-editor`} element={<ChecklistEditor />} />,
+      ];
+    case 'ops_training':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+      ];
+    case 'compliance':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+      ];
+    case 'it_infra':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+      ];
+    case 'hr':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+      ];
+    case 'customer_support':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
       ];
     case 'bank_officer':
       return [
@@ -118,21 +149,6 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key="bank-reports" path={`${basePath}/reports`} element={<DownloadReports />} />,
         <Route key="bank-military" path={`${basePath}/military`} element={<MilitaryCoordination />} />,
         <Route key="bank-complaints" path={`${basePath}/complaints`} element={<CustomerComplaintsReview />} />,
-      ];
-    case 'customer':
-      return [
-        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="customer-verify" path={`${basePath}/verify`} element={<VerifyFee />} />,
-        <Route key="customer-complaint" path={`${basePath}/complaint`} element={<SubmitComplaint />} />,
-        <Route key="customer-feedback" path={`${basePath}/feedback`} element={<FeedbackLog />} />,
-        <Route key="customer-verify-csp" path={`${basePath}/verify-csp`} element={<VerifyCSP />} />,
-        <Route key="customer-track" path={`${basePath}/track`} element={<TrackComplaint />} />,
-      ];
-    case 'army_welfare_officer':
-      return [
-        <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
-        <Route key="army-families" path={`${basePath}/families`} element={<ArmyFamilies />} />,
-        <Route key="army-payouts" path={`${basePath}/payouts`} element={<SpecialPayouts />} />,
       ];
     default:
       return [];
@@ -176,29 +192,49 @@ const App = () => (
               {createRoleRoutes('admin', '/admin')}
             </Route>
 
-            {/* Agent Routes */}
-            <Route path="/agent" element={<AppLayout requiredRoles={['csp_agent', 'fi_agent']} />}>
-              {createRoleRoutes('csp_agent', '/agent')}
+            {/* CSP Agent Routes */}
+            <Route path="/csp" element={<AppLayout requiredRoles={['csp_agent']} />}>
+              {createRoleRoutes('csp_agent', '/csp')}
             </Route>
 
-            {/* Auditor Routes */}
-            <Route path="/auditor" element={<AppLayout requiredRoles={['auditor']} />}>
-              {createRoleRoutes('auditor', '/auditor')}
+            {/* Field Auditor Routes */}
+            <Route path="/auditor" element={<AppLayout requiredRoles={['field_auditor']} />}>
+              {createRoleRoutes('field_auditor', '/auditor')}
+            </Route>
+
+            {/* Cluster Manager Routes */}
+            <Route path="/cluster-manager" element={<AppLayout requiredRoles={['cluster_manager']} />}>
+              {createRoleRoutes('cluster_manager', '/cluster-manager')}
+            </Route>
+
+            {/* Ops/Training Routes */}
+            <Route path="/ops" element={<AppLayout requiredRoles={['ops_training']} />}>
+              {createRoleRoutes('ops_training', '/ops')}
+            </Route>
+
+            {/* Compliance Routes */}
+            <Route path="/compliance" element={<AppLayout requiredRoles={['compliance']} />}>
+              {createRoleRoutes('compliance', '/compliance')}
+            </Route>
+
+            {/* IT/Infra Routes */}
+            <Route path="/it" element={<AppLayout requiredRoles={['it_infra']} />}>
+              {createRoleRoutes('it_infra', '/it')}
+            </Route>
+
+            {/* HR Routes */}
+            <Route path="/hr" element={<AppLayout requiredRoles={['hr']} />}>
+              {createRoleRoutes('hr', '/hr')}
+            </Route>
+
+            {/* Customer Support Routes */}
+            <Route path="/support" element={<AppLayout requiredRoles={['customer_support']} />}>
+              {createRoleRoutes('customer_support', '/support')}
             </Route>
 
             {/* Bank Officer Routes */}
             <Route path="/bank" element={<AppLayout requiredRoles={['bank_officer']} />}>
               {createRoleRoutes('bank_officer', '/bank')}
-            </Route>
-
-            {/* Customer Routes */}
-            <Route path="/customer" element={<AppLayout requiredRoles={['customer']} />}>
-              {createRoleRoutes('customer', '/customer')}
-            </Route>
-
-            {/* Army Welfare Routes */}
-            <Route path="/army" element={<AppLayout requiredRoles={['army_welfare_officer']} />}>
-              {createRoleRoutes('army_welfare_officer', '/army')}
             </Route>
 
             {/* Not Found */}
