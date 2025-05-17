@@ -56,7 +56,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
 
   // Check if user has required roles (if any are specified)
   if (requiredRoles.length > 0 && !isAuthorized(requiredRoles)) {
-    console.log("Access denied: User does not have required roles", { 
+    console.log("Access denied: User does not have required role", { 
       userRole: user?.role, 
       requiredRoles 
     });
