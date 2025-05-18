@@ -171,7 +171,7 @@ const AdminDashboard: React.FC = () => {
           value={`${totalActive}`}
           description="Active agents"
           icon={Users}
-          trend={{ value: 12, isPositive: true }}
+          trend={{ value: 12, isPositive: true, label: "from last month" }}
           isLoading={loading}
         />
         <StatsCard
@@ -186,7 +186,7 @@ const AdminDashboard: React.FC = () => {
           value={`${openAlerts}`}
           description="Requiring attention"
           icon={AlertTriangle}
-          trend={{ value: 5, isPositive: false }}
+          trend={{ value: 5, isPositive: false, label: "since yesterday" }}
           isLoading={loading}
         />
         <StatsCard

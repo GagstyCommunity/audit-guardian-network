@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
-import { AlertTriangle, ArrowUpRight, Search } from 'lucide-react';
+import { AlertTriangle, ArrowUpRight, Search, CircleDollarSign } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
@@ -132,19 +133,22 @@ const FraudEngine: React.FC = () => {
           title="System Risk Score"
           value={`${riskScore}%`}
           description="Overall system risk assessment"
+          icon={CircleDollarSign}
           isLoading={loading}
         />
         <StatsCard
           title="High Risk Alerts"
           value={highRiskAlerts.length.toString()}
           description="Critical and high risk alerts"
-          trend={{ value: 12, isPositive: false }}
+          icon={AlertTriangle}
+          trend={{ value: 12, isPositive: false, label: "since last week" }}
           isLoading={loading}
         />
         <StatsCard
           title="Open Alerts"
           value={openAlerts.length.toString()}
           description="Alerts requiring attention"
+          icon={AlertTriangle}
           isLoading={loading}
         />
       </div>
