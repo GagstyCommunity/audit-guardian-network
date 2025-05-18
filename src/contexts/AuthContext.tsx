@@ -264,12 +264,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     console.log("Logging out user");
+    localStorage.removeItem('cspUser');
     setAuthState({
       user: null,
       isAuthenticated: false,
       isLoading: false,
     });
-    localStorage.removeItem('cspUser');
   };
 
   const isAuthorized = (roles: UserRole[]): boolean => {

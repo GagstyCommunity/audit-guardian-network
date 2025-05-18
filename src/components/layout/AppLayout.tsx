@@ -22,12 +22,19 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Close sidebar on route change when on mobile
+  // Set initial sidebar state based on device
   useEffect(() => {
     if (isMobile) {
       setSidebarOpen(false);
     } else {
       setSidebarOpen(true);
+    }
+  }, [isMobile]);
+
+  // Close sidebar on route change when on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
     }
   }, [location.pathname, isMobile]);
 
