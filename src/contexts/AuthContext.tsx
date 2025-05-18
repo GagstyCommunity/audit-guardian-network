@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AuthState, User, UserRole } from '../types/auth.types';
+import { toast } from '@/components/ui/use-toast';
 
 interface AuthContextProps {
   authState: AuthState;
@@ -103,6 +104,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'Central',
     lastLogin: new Date(),
     createdAt: new Date('2023-01-15'),
+    rewardsPoints: 2100,
+    complianceScore: 94,
+    rankWeekly: 3,
+    rankMonthly: 5
   },
   'ops@example.com': {
     id: '7',
@@ -114,6 +119,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'All',
     lastLogin: new Date(),
     createdAt: new Date('2023-02-10'),
+    rewardsPoints: 1800,
+    complianceScore: 90,
+    rankWeekly: 5,
+    rankMonthly: 8
   },
   'compliance@example.com': {
     id: '8',
@@ -125,6 +134,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'All',
     lastLogin: new Date(),
     createdAt: new Date('2023-03-05'),
+    rewardsPoints: 1950,
+    complianceScore: 97,
+    rankWeekly: 4,
+    rankMonthly: 2
   },
   'it@example.com': {
     id: '9',
@@ -136,6 +149,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'HQ',
     lastLogin: new Date(),
     createdAt: new Date('2023-01-20'),
+    rewardsPoints: 1600,
+    complianceScore: 92,
+    rankWeekly: 7,
+    rankMonthly: 9
   },
   'hr@example.com': {
     id: '10',
@@ -147,6 +164,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'HQ',
     lastLogin: new Date(),
     createdAt: new Date('2023-02-01'),
+    rewardsPoints: 1750,
+    complianceScore: 91,
+    rankWeekly: 6,
+    rankMonthly: 7
   },
   'support@example.com': {
     id: '11',
@@ -158,6 +179,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'All',
     lastLogin: new Date(),
     createdAt: new Date('2023-03-15'),
+    rewardsPoints: 1700,
+    complianceScore: 89,
+    rankWeekly: 8,
+    rankMonthly: 10
   },
   'bank@example.com': {
     id: '12',
@@ -170,6 +195,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'South',
     lastLogin: new Date(),
     createdAt: new Date('2023-05-20'),
+    rewardsPoints: 1850,
+    complianceScore: 95,
+    rankWeekly: 5,
+    rankMonthly: 6
   },
   'customer@example.com': {
     id: '13',
@@ -181,6 +210,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'North',
     lastLogin: new Date(),
     createdAt: new Date('2023-06-15'),
+    rewardsPoints: 0,
+    complianceScore: 0,
+    rankWeekly: 0,
+    rankMonthly: 0
   },
   'armywelfare@example.com': {
     id: '14',
@@ -192,6 +225,10 @@ const MOCK_USERS: Record<string, User> = {
     region: 'Army Cantonments',
     lastLogin: new Date(),
     createdAt: new Date('2023-07-01'),
+    rewardsPoints: 2050,
+    complianceScore: 93,
+    rankWeekly: 4,
+    rankMonthly: 6
   }
 };
 
@@ -253,9 +290,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Store user in localStorage
           localStorage.setItem('cspUser', JSON.stringify(updatedUser));
           console.log("User authenticated and saved to localStorage:", updatedUser);
+          
+          toast({
+            title: "Login successful",
+            description: `Welcome back, ${updatedUser.name}!`,
+          });
+          
           resolve();
         } else {
           console.error("Authentication failed for email:", lowercaseEmail);
+          
+          toast({
+            title: "Login failed",
+            description: "Invalid email or password",
+            variant: "destructive"
+          });
+          
           reject(new Error('Invalid credentials'));
         }
       }, 1000); // Simulate network delay
@@ -269,6 +319,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       user: null,
       isAuthenticated: false,
       isLoading: false,
+    });
+    
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
     });
   };
 

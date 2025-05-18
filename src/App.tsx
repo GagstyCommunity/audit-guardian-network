@@ -47,6 +47,7 @@ import AuditForm from "./pages/auditor/AuditForm";
 import VisitLogs from "./pages/auditor/VisitLogs";
 import RedZoneProtocol from "./pages/auditor/RedZoneProtocol";
 import LiveVisitChecklist from "./pages/auditor/LiveVisitChecklist";
+import AuditQuestionnaire from "./pages/auditor/AuditQuestionnaire";
 
 // Bank Officer pages
 import CSPRegistry from "./pages/bank/CSPRegistry";
@@ -73,6 +74,16 @@ import AuditChecklist from "./components/auditor/AuditChecklist";
 
 // Cluster Manager pages
 import ChecklistEditor from "./pages/cluster-manager/ChecklistEditor";
+import CSPManagementCluster from "./pages/cluster-manager/CSPManagement";
+
+// Compliance pages
+import AuditQuestions from "./pages/compliance/AuditQuestions";
+
+// HR pages
+import StaffDirectory from "./pages/hr/StaffDirectory";
+
+// IT pages
+import DeviceInventory from "./pages/it/DeviceInventory";
 
 const queryClient = new QueryClient();
 
@@ -113,11 +124,14 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key="auditor-red-zone" path={`${basePath}/red-zone`} element={<RedZoneProtocol />} />,
         <Route key="auditor-checklist" path={`${basePath}/live-visit`} element={<LiveVisitChecklist />} />,
         <Route key="auditor-rewards" path={`${basePath}/rewards`} element={<RewardsDashboard />} />,
+        <Route key="auditor-questionnaire" path={`${basePath}/questionnaire/:id`} element={<AuditQuestionnaire />} />,
+        <Route key="auditor-questionnaire-new" path={`${basePath}/questionnaire`} element={<AuditQuestionnaire />} />,
       ];
     case 'cluster_manager':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
         <Route key="cluster-checklist-editor" path={`${basePath}/checklist-editor`} element={<ChecklistEditor />} />,
+        <Route key="cluster-csp-management" path={`${basePath}/csp-management`} element={<CSPManagementCluster />} />,
       ];
     case 'ops_training':
       return [
@@ -126,14 +140,17 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
     case 'compliance':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+        <Route key="compliance-audit-questions" path={`${basePath}/audit-questions`} element={<AuditQuestions />} />,
       ];
     case 'it_infra':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+        <Route key="it-device-inventory" path={`${basePath}/device-inventory`} element={<DeviceInventory />} />,
       ];
     case 'hr':
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
+        <Route key="hr-staff-directory" path={`${basePath}/staff-directory`} element={<StaffDirectory />} />,
       ];
     case 'customer_support':
       return [

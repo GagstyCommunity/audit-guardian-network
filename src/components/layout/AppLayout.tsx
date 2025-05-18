@@ -46,17 +46,17 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
   // Check if user is loading
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-csp-light">
+      <div className="flex h-screen w-full items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-csp-blue border-t-transparent"></div>
-          <p className="text-lg font-medium text-csp-blue">Loading...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-lg font-medium text-primary">Loading...</p>
         </div>
       </div>
     );
   }
 
   // Check if user is not authenticated
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     console.log("User is not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
   }
@@ -68,6 +68,33 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       requiredRoles 
     });
     return <Navigate to="/unauthorized" replace />;
+  }
+
+  // Get base path based on user role
+  const getBasePath = () => {
+    switch (user.role) {
+      case 'admin': return '/admin';
+      case 'csp_agent': return '/csp';
+      case 'field_auditor': return '/auditor';
+      case 'cluster_manager': return '/cluster-manager';
+      case 'ops_training': return '/ops';
+      case 'compliance': return '/compliance';
+      case 'it_infra': return '/it';
+      case 'hr': return '/hr';
+      case 'customer_support': return '/support';
+      case 'bank_officer': return '/bank';
+      case 'fi_agent': return '/fi';
+      case 'auditor': return '/auditor';
+      case 'customer': return '/customer';
+      case 'army_welfare_officer': return '/army';
+      default: return '/dashboard';
+    }
+  };
+
+  // Redirect to role-based dashboard if at /dashboard
+  if (location.pathname === '/dashboard') {
+    const basePath = getBasePath();
+    return <Navigate to={basePath} replace />;
   }
 
   // For debugging - log current user and path
