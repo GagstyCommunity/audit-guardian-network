@@ -40,15 +40,16 @@ interface StatusBadgeProps {
   status: string;
   customLabel?: string;
   className?: string;
+  label?: string; // Added the label prop
 }
 
-export function StatusBadge({ status, customLabel, className = '' }: StatusBadgeProps) {
+export function StatusBadge({ status, customLabel, label, className = '' }: StatusBadgeProps) {
   // Convert status to lowercase and replace spaces/underscores with underscores for consistency
   const normalizedStatus = status.toLowerCase().replace(/[\s-]/g, '_') as StatusType;
   
   // Use the configured status if it exists, otherwise default to 'default'
   const config = statusConfig[normalizedStatus] || { 
-    label: customLabel || status, 
+    label: customLabel || label || status, 
     variant: 'default' 
   };
 
@@ -57,7 +58,7 @@ export function StatusBadge({ status, customLabel, className = '' }: StatusBadge
       variant={config.variant} 
       className={className}
     >
-      {customLabel || config.label}
+      {customLabel || label || config.label}
     </Badge>
   );
 }

@@ -1,20 +1,21 @@
-
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from '@/components/ui/skeleton';
-import { LucideIcon } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowDown, ArrowUp, CheckCircle2, CircleDollarSign, ShoppingCart, PackageCheck, TrendingDown, TrendingUp } from 'lucide-react';
+import { cn } from "@/lib/utils";
+
+interface Trend {
+  value: number;
+  isPositive: boolean;
+  label: string;
+}
 
 interface StatsCardProps {
   title: string;
-  value: string | number;
-  description?: string;
-  icon?: LucideIcon;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-  isLoading?: boolean;
-  className?: string;
+  value: string;
+  description: string;
+  icon: React.ComponentType<any>;
+  trend?: Trend;
+  isLoading: boolean;
 }
 
 export function StatsCard({
@@ -23,39 +24,32 @@ export function StatsCard({
   description,
   icon: Icon,
   trend,
-  isLoading = false,
-  className = ""
+  isLoading
 }: StatsCardProps) {
-  if (isLoading) {
-    return (
-      <Card className={className}>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <Skeleton className="h-5 w-20" />
-          {Icon && <Skeleton className="h-8 w-8 rounded" />}
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-10 w-24 mb-1" />
-          <Skeleton className="h-4 w-32" />
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-        )}
+        <div className="text-2xl font-bold">{isLoading ? "Loading..." : value}</div>
+        <p className="text-sm text-muted-foreground">
+          {description}
+        </p>
         {trend && (
-          <div className={`flex items-center mt-1 text-xs ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-            {trend.isPositive ? '↑' : '↓'} {trend.value}%
-            <span className="text-muted-foreground ml-1">from last period</span>
+          <div className="mt-4 flex items-end justify-between space-x-2">
+            <p className="text-sm text-muted-foreground">
+              {trend.isPositive ? (
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-500" />
+              )}
+              <span className={cn(trend.isPositive ? "text-green-500" : "text-red-500", "ml-1 font-medium")}>
+                {trend.value}%
+              </span>
+              {` ${trend.label}`}
+            </p>
           </div>
         )}
       </CardContent>
