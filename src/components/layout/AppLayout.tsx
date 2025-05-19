@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -84,7 +83,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       case 'hr': return '/hr';
       case 'customer_support': return '/support';
       case 'bank_officer': return '/bank';
-      case 'fi_agent': return '/fi'; // Ensure this route is properly defined
+      case 'fi_agent': return '/fi';
       case 'customer': return '/customer';
       case 'army_welfare_officer': return '/army';
       default: return '/dashboard';

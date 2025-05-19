@@ -176,6 +176,18 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key={`${role}-dash`} path={`${basePath}`} element={<FiDashboard />} />,
         <Route key="fi-customer-accounts" path={`${basePath}/customer-accounts`} element={<CustomerAccounts />} />,
       ];
+    case 'customer':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<CustomerDashboard />} />,
+        <Route key="customer-accounts" path={`${basePath}/accounts`} element={<AccountDetails />} />,
+        <Route key="customer-transactions" path={`${basePath}/transactions`} element={<Transactions />} />,
+        <Route key="customer-verify-fee" path={`${basePath}/verify-fee`} element={<VerifyFee />} />,
+        <Route key="customer-submit-complaint" path={`${basePath}/submit-complaint`} element={<SubmitComplaint />} />,
+        <Route key="customer-feedback" path={`${basePath}/feedback`} element={<FeedbackLog />} />,
+        <Route key="customer-verify-csp" path={`${basePath}/verify-csp`} element={<VerifyCSP />} />,
+        <Route key="customer-track-complaint" path={`${basePath}/track-complaint`} element={<TrackComplaint />} />,
+        <Route key="customer-support" path={`${basePath}/support`} element={<SubmitComplaint />} />,
+      ];
     default:
       return [];
   }
