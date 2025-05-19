@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -116,6 +115,7 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key="csp-gadget-center" path={`${basePath}/gadget-center`} element={<GadgetCenter />} />,
       ];
     case 'field_auditor':
+    case 'auditor': // Added this case to handle both auditor roles
       return [
         <Route key={`${role}-dash`} path={`${basePath}`} element={<Dashboard />} />,
         <Route key="auditor-tasks" path={`${basePath}/tasks`} element={<AuditorTasks />} />,
@@ -214,8 +214,8 @@ const App = () => (
               {createRoleRoutes('csp_agent', '/csp')}
             </Route>
 
-            {/* Field Auditor Routes */}
-            <Route path="/auditor" element={<AppLayout requiredRoles={['field_auditor']} />}>
+            {/* Field Auditor Routes - update to include both auditor roles */}
+            <Route path="/auditor" element={<AppLayout requiredRoles={['field_auditor', 'auditor']} />}>
               {createRoleRoutes('field_auditor', '/auditor')}
             </Route>
 

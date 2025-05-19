@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -75,6 +76,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       case 'admin': return '/admin';
       case 'csp_agent': return '/csp';
       case 'field_auditor': return '/auditor';
+      case 'auditor': return '/auditor'; // Add this line to handle auditor role
       case 'cluster_manager': return '/cluster-manager';
       case 'ops_training': return '/ops';
       case 'compliance': return '/compliance';
@@ -83,7 +85,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       case 'customer_support': return '/support';
       case 'bank_officer': return '/bank';
       case 'fi_agent': return '/fi';
-      case 'auditor': return '/auditor';
       case 'customer': return '/customer';
       case 'army_welfare_officer': return '/army';
       default: return '/dashboard';
