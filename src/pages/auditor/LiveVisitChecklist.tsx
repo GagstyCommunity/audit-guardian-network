@@ -33,6 +33,106 @@ import { toast } from '@/components/ui/use-toast';
 import { Visit, ChecklistItem } from '@/types/auditor.types';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
+// Dummy data for the checklist
+const dummyChecklist: ChecklistItem[] = [
+  {
+    id: "check-001",
+    title: "Verify CSP ID badge",
+    description: "Check that the CSP ID badge is valid and matches records",
+    required: true,
+    completed: false,
+    category: "verification"
+  },
+  {
+    id: "check-002",
+    title: "Confirm biometric authentication system",
+    description: "Verify the biometric authentication system is functioning properly",
+    required: true,
+    completed: false,
+    category: "equipment"
+  },
+  {
+    id: "check-003",
+    title: "Check transaction records",
+    description: "Review the last 7 days of transaction records for any anomalies",
+    required: true,
+    completed: false,
+    category: "documentation"
+  },
+  {
+    id: "check-004",
+    title: "Inspect cash management practices",
+    description: "Verify that cash handling and storage follows security protocols",
+    required: true,
+    completed: false,
+    category: "security"
+  },
+  {
+    id: "check-005",
+    title: "Verify know-your-customer (KYC) documentation",
+    description: "Ensure all KYC documents are properly maintained and up to date",
+    required: true,
+    completed: false,
+    category: "compliance"
+  },
+  {
+    id: "check-006",
+    title: "Inspect premises cleanliness",
+    description: "Check that the CSP premises are clean and professionally maintained",
+    required: false,
+    completed: false,
+    category: "premises"
+  },
+  {
+    id: "check-007",
+    title: "Verify signage and branding",
+    description: "Ensure proper branding and required regulatory signage is displayed",
+    required: true,
+    completed: false,
+    category: "compliance"
+  }
+];
+
+// Dummy visit data
+const dummyVisits: Visit[] = [
+  {
+    id: "visit-001",
+    csp_id: "CSP245",
+    csp_name: "Aarav Sharma",
+    visit_date: "2025-05-15T09:00:00",
+    status: "pending",
+    priority: "high",
+    location: {
+      district: "North District",
+      village: "Chandpur",
+      lat: 28.7041,
+      long: 77.1025
+    },
+    distance: 4.5,
+    estimated_time: 15,
+    red_zone: true,
+    issues: ["Face verification failed", "Suspicious transaction pattern"]
+  },
+  {
+    id: "visit-002",
+    csp_id: "CSP108",
+    csp_name: "Priya Patel",
+    visit_date: "2025-05-15T13:00:00",
+    status: "pending",
+    priority: "medium",
+    location: {
+      district: "East District",
+      village: "Raipur",
+      lat: 28.6139,
+      long: 77.2090
+    },
+    distance: 12,
+    estimated_time: 25,
+    red_zone: false,
+    issues: ["Suspicious transaction pattern"]
+  }
+];
+
 const LiveVisitChecklist: React.FC = () => {
   const [searchParams] = useSearchParams();
   const visitId = searchParams.get('id') || 'visit-001'; // Default to first visit for demo
@@ -241,125 +341,142 @@ const LiveVisitChecklist: React.FC = () => {
                   <li className="flex items-center">
                     <Button variant="outline" size="sm" className="mr-2">
                       <UserCheck className="h-4 w-4 mr-1" />
-                      Scan Face
+                      Verify Identity
                     </Button>
-                    Perform face verification
+                    Match CSP identity with records
                   </li>
                 </ul>
               </div>
               
-              <div className="bg-muted p-4 rounded-md">
-                <h3 className="font-medium mb-2">CSP Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Full Name</p>
-                    <p>{visitInfo.csp_name}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">ID Number</p>
-                    <p>{visitInfo.csp_id}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Registration Date</p>
-                    <p>03/12/2023</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Status</p>
-                    <Badge>Active</Badge>
-                  </div>
-                </div>
+              {/* Checklist for this step */}
+              <div className="space-y-2">
+                {checklist
+                  .filter(item => item.category === "verification")
+                  .map(item => (
+                    <div key={item.id} className="flex items-top space-x-2 border p-3 rounded-md">
+                      <Checkbox 
+                        id={item.id} 
+                        checked={item.completed}
+                        onCheckedChange={() => handleCheckItem(item.id)}
+                      />
+                      <div className="grid gap-1.5">
+                        <Label htmlFor={item.id} className="text-base cursor-pointer">
+                          {item.title}
+                          {item.required && <span className="text-red-500 ml-1">*</span>}
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                }
               </div>
             </div>
           )}
           
           {currentStepIndex === 1 && (
-            <div className="space-y-4">
-              <p>Verify that the CSP premises meets all required standards.</p>
-              
-              {checklist.filter(item => item.category === 'premises').map((item) => (
-                <div key={item.id} className="flex items-start gap-2 border-b pb-2">
-                  <Checkbox 
-                    id={item.id} 
-                    checked={item.completed} 
-                    onCheckedChange={() => handleCheckItem(item.id)} 
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor={item.id} className="font-medium cursor-pointer">
-                      {item.title}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+            <div className="space-y-2">
+              {checklist
+                .filter(item => item.category === "premises")
+                .map(item => (
+                  <div key={item.id} className="flex items-top space-x-2 border p-3 rounded-md">
+                    <Checkbox 
+                      id={item.id} 
+                      checked={item.completed}
+                      onCheckedChange={() => handleCheckItem(item.id)}
+                    />
+                    <div className="grid gap-1.5">
+                      <Label htmlFor={item.id} className="text-base cursor-pointer">
+                        {item.title}
+                        {item.required && <span className="text-red-500 ml-1">*</span>}
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              }
               
-              <div className="p-4 border rounded-md">
-                <div className="aspect-video w-full overflow-hidden rounded-md bg-gray-100">
-                  <div className="flex h-full w-full items-center justify-center">
-                    <MapPin className="h-12 w-12 text-muted-foreground opacity-50" />
-                    <span className="ml-2 text-lg text-muted-foreground">Premises Location</span>
-                  </div>
-                </div>
-                <p className="text-sm mt-2">Verify that the location matches the registered address</p>
+              <div className="pt-4">
+                <Button variant="outline" className="w-full">
+                  <Camera className="mr-2 h-4 w-4" /> Take Photo of Premises
+                </Button>
               </div>
             </div>
           )}
           
           {currentStepIndex === 2 && (
-            <div className="space-y-4">
-              <p>Review the required documentation from the CSP.</p>
-              
-              {checklist.filter(item => item.category === 'documentation').map((item) => (
-                <div key={item.id} className="flex items-start gap-2 border-b pb-2">
-                  <Checkbox 
-                    id={item.id} 
-                    checked={item.completed} 
-                    onCheckedChange={() => handleCheckItem(item.id)} 
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor={item.id} className="font-medium cursor-pointer">
-                      {item.title}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                    {item.required && <Badge className="bg-blue-100 text-blue-800">Required</Badge>}
+            <div className="space-y-2">
+              {checklist
+                .filter(item => ["documentation", "compliance"].includes(item.category))
+                .map(item => (
+                  <div key={item.id} className="flex items-top space-x-2 border p-3 rounded-md">
+                    <Checkbox 
+                      id={item.id} 
+                      checked={item.completed}
+                      onCheckedChange={() => handleCheckItem(item.id)}
+                    />
+                    <div className="grid gap-1.5">
+                      <Label htmlFor={item.id} className="text-base cursor-pointer">
+                        {item.title}
+                        {item.required && <span className="text-red-500 ml-1">*</span>}
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              }
             </div>
           )}
           
           {currentStepIndex === 3 && (
             <div className="space-y-4">
-              <p>Take photos as evidence for the audit.</p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map((idx) => (
-                  <Card key={idx}>
-                    <CardContent className="p-0">
-                      <AspectRatio ratio={3/4} className="bg-muted relative">
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <Camera className="h-8 w-8 text-muted-foreground opacity-50" />
-                          <p className="text-sm text-muted-foreground mt-2">Photo {idx}</p>
-                        </div>
-                        <Button 
-                          variant="secondary" 
-                          size="sm" 
-                          className="absolute bottom-2 left-1/2 transform -translate-x-1/2"
-                        >
-                          <Camera className="h-4 w-4 mr-1" />
-                          Capture
-                        </Button>
-                      </AspectRatio>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Required Photos</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="p-3 border rounded-md flex items-center justify-between">
+                      <div>CSP ID Card</div>
+                      <Button size="sm" variant="outline">
+                        <Camera className="h-4 w-4 mr-1" /> Capture
+                      </Button>
+                    </div>
+                    <div className="p-3 border rounded-md flex items-center justify-between">
+                      <div>Transaction Device</div>
+                      <Button size="sm" variant="outline">
+                        <Camera className="h-4 w-4 mr-1" /> Capture
+                      </Button>
+                    </div>
+                    <div className="p-3 border rounded-md flex items-center justify-between">
+                      <div>KYC Documentation</div>
+                      <Button size="sm" variant="outline">
+                        <Camera className="h-4 w-4 mr-1" /> Capture
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Captured Images</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="flex items-center justify-center h-32 border-2 border-dashed rounded-md bg-muted">
+                      <p className="text-muted-foreground">No images captured yet</p>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
               
-              <div className="border border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                <p className="text-sm font-medium">Upload Photos</p>
-                <p className="text-xs text-muted-foreground">Drag and drop or click to upload</p>
-                <Button variant="outline" size="sm" className="mt-2">
-                  <Image className="h-4 w-4 mr-1" /> Select Files
+              <div>
+                <Button variant="outline" className="w-full">
+                  <Upload className="mr-2 h-4 w-4" /> Upload Additional Documents
                 </Button>
               </div>
             </div>
@@ -367,40 +484,62 @@ const LiveVisitChecklist: React.FC = () => {
           
           {currentStepIndex === 4 && (
             <div className="space-y-4">
-              <div className="text-center p-6">
-                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold">Audit Visit Complete</h2>
-                <p className="text-muted-foreground">You have completed {Math.round(progress)}% of the checklist.</p>
-                
-                {progress < 100 && (
-                  <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-                    <p className="text-amber-800">Some items are still pending completion. Are you sure you want to submit?</p>
-                  </div>
-                )}
-                
-                <div className="mt-6">
-                  <Button onClick={handleCompleteVisit} className="w-full">Submit Audit Results</Button>
+              <div className="p-4 border rounded-md bg-green-50">
+                <h3 className="font-medium text-green-800 mb-2 flex items-center">
+                  <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                  Audit Summary
+                </h3>
+                <p className="text-green-700">
+                  You've completed {checklist.filter(item => item.completed).length} out of {checklist.length} checklist items.
+                </p>
+              </div>
+              
+              {checklist.filter(item => item.required && !item.completed).length > 0 && (
+                <div className="p-4 border rounded-md bg-amber-50">
+                  <h3 className="font-medium text-amber-800 mb-2 flex items-center">
+                    <AlertTriangle className="h-4 w-4 mr-2 text-amber-600" />
+                    Missing Required Items
+                  </h3>
+                  <ul className="space-y-1 list-disc list-inside text-amber-700">
+                    {checklist
+                      .filter(item => item.required && !item.completed)
+                      .map(item => (
+                        <li key={item.id}>{item.title}</li>
+                      ))
+                    }
+                  </ul>
                 </div>
+              )}
+              
+              <div className="p-4 border rounded-md">
+                <h3 className="font-medium mb-2">Audit Recommendations</h3>
+                <p className="text-muted-foreground">
+                  Based on your audit findings, please provide recommendations for improvement:
+                </p>
+                <textarea 
+                  className="w-full border rounded-md mt-2 p-2 h-24" 
+                  placeholder="Enter your recommendations..."
+                ></textarea>
               </div>
             </div>
           )}
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button 
-            variant="outline"
-            onClick={handlePreviousStep} 
+            variant="outline" 
+            onClick={handlePreviousStep}
             disabled={currentStepIndex === 0}
           >
-            <ArrowLeft className="h-4 w-4 mr-1" /> Previous
+            <ArrowLeft className="h-4 w-4 mr-2" /> Previous
           </Button>
           
           {currentStepIndex < steps.length - 1 ? (
             <Button onClick={handleNextStep}>
-              Next <ArrowRight className="h-4 w-4 ml-1" />
+              Next <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
             <Button onClick={handleCompleteVisit}>
-              Complete Visit
+              Complete Audit <CheckCircle className="h-4 w-4 ml-2" />
             </Button>
           )}
         </CardFooter>
@@ -408,112 +547,5 @@ const LiveVisitChecklist: React.FC = () => {
     </div>
   );
 };
-
-// Dummy data
-const dummyVisits: Visit[] = [
-  {
-    id: "visit-001",
-    csp_id: "CSP245",
-    csp_name: "Aarav Sharma",
-    visit_date: "2025-05-15T09:00:00",
-    status: "pending",
-    priority: "high",
-    location: {
-      district: "North District",
-      village: "Chandpur",
-      lat: 28.7041,
-      long: 77.1025
-    },
-    distance: 4.5,
-    estimated_time: 15,
-    red_zone: true,
-    issues: ["Face verification failed", "Suspicious transaction pattern"]
-  },
-  {
-    id: "visit-002",
-    csp_id: "CSP108",
-    csp_name: "Priya Patel",
-    visit_date: "2025-05-15T13:00:00",
-    status: "pending",
-    priority: "medium",
-    location: {
-      district: "East District",
-      village: "Raipur",
-      lat: 28.6139,
-      long: 77.2090
-    },
-    distance: 12,
-    estimated_time: 25,
-    red_zone: false,
-    issues: ["Suspicious transaction pattern"]
-  }
-];
-
-const dummyChecklist: ChecklistItem[] = [
-  {
-    id: "check-001",
-    title: "Signage and Branding",
-    description: "Check that proper signage and branding is displayed outside the premises",
-    required: true,
-    completed: true,
-    category: "premises"
-  },
-  {
-    id: "check-002",
-    title: "Operational Hours Display",
-    description: "Verify that operational hours are clearly displayed",
-    required: true,
-    completed: false,
-    category: "premises"
-  },
-  {
-    id: "check-003",
-    title: "Space Requirements",
-    description: "CSP should have minimum 100 sq ft dedicated space",
-    required: true,
-    completed: false,
-    category: "premises"
-  },
-  {
-    id: "check-004",
-    title: "Basic Infrastructure",
-    description: "Check availability of electricity, internet connectivity",
-    required: true,
-    completed: true,
-    category: "premises"
-  },
-  {
-    id: "check-005",
-    title: "CSP Registration Certificate",
-    description: "Verify original CSP registration certificate",
-    required: true,
-    completed: false,
-    category: "documentation"
-  },
-  {
-    id: "check-006",
-    title: "Service Agreement",
-    description: "Review the service agreement with the bank",
-    required: true,
-    completed: false,
-    category: "documentation"
-  },
-  {
-    id: "check-007",
-    title: "Transaction Records",
-    description: "Inspect transaction records for the last month",
-    required: true,
-    completed: false,
-    category: "documentation"
-  },
-  {
-    id: "check-008",
-    title: "KYC Documents",
-    description: "Check if KYC documents are properly maintained",
-    required: true,
-    completed: false,
-    category: "documentation"
-  }
-];
 
 export default LiveVisitChecklist;

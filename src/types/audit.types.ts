@@ -4,36 +4,27 @@ export interface AuditQuestion {
   question: string;
   category: string;
   required: boolean;
+  answerType: "text" | "checkbox" | "radio" | "rating" | "dropdown";
   options?: string[];
-  answerType: 'text' | 'radio' | 'checkbox' | 'dropdown' | 'rating';
   createdAt: Date;
   createdBy: string;
-  isActive: boolean;
-}
-
-export interface AuditQuestionCategory {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: Date;
   isActive: boolean;
 }
 
 export interface AuditAnswer {
-  id: string;
   questionId: string;
-  answer: string;
-  auditId: string;
-  createdAt: Date;
-  createdBy: string;
+  answer: string | string[] | number;
+  comments?: string;
 }
 
-export interface AuditQuestionnaire {
+export interface AuditReport {
   id: string;
-  title: string;
-  description: string;
-  questions: AuditQuestion[];
-  createdAt: Date;
-  createdBy: string;
-  isActive: boolean;
+  cspId: string;
+  auditorId: string;
+  date: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected';
+  answers: AuditAnswer[];
+  photos?: string[];
+  signature?: string;
+  overallRating?: number;
 }
