@@ -1,684 +1,193 @@
 
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types/auth.types';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { 
-  BarChart3, 
-  Users, 
-  CheckSquare, 
-  AlertTriangle, 
-  FileText, 
-  Bell, 
-  Settings, 
-  AlertCircle,
-  ShieldCheck,
-  UserCog,
-  MapPin,
-  FileSearch,
-  Download,
-  MessageSquare,
-  ReceiptText,
-  ChevronDown,
-  ChevronRight,
-  Home,
-  HelpCircle,
-  UserPlus,
-  HeartHandshake,
-  Phone,
-  KeySquare,
-  Clock,
+import {
+  ChevronLeft,
+  LayoutDashboard,
+  Users,
+  Settings,
+  Bell,
   Shield,
-  Cog,
-  FileCheck,
-  Eye,
-  Menu,
-  X,
+  AlertTriangle,
+  FileText,
+  Camera,
+  Smartphone,
+  MessageSquare,
+  BarChart,
+  Wifi,
+  ClipboardCheck,
   Award,
-  Package,
-  Wrench,
-  User,
-  Laptop,
   BookOpen,
   Building,
-  Headset
+  Landmark,
+  CreditCard
 } from 'lucide-react';
-import { colorPalette } from '../../types/auth.types';
+import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
 }
 
-interface SidebarItemProps {
-  to: string;
-  icon: React.ReactNode;
+interface NavItem {
   label: string;
-  end?: boolean;
+  icon: React.ReactNode;
+  path: string;
+  roles: UserRole[];
 }
-
-interface MenuSection {
-  title: string;
-  items: {
-    to: string;
-    icon: React.ReactNode;
-    label: string;
-    roles: UserRole[];
-    end?: boolean;
-  }[];
-}
-
-const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, end = false }) => {
-  return (
-    <NavLink
-      to={to}
-      end={end}
-      className={({ isActive }) =>
-        cn(
-          "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-          isActive
-            ? "text-white" // Active state
-            : "text-gray-700 hover:bg-opacity-10 hover:bg-gray-100"
-        )
-      }
-      style={({ isActive }) => ({
-        backgroundColor: isActive ? colorPalette.primaryPurple : 'transparent',
-      })}
-    >
-      <span className="flex h-5 w-5 items-center justify-center">{icon}</span>
-      <span>{label}</span>
-    </NavLink>
-  );
-};
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
-  const { authState, isAuthorized } = useAuth();
+  const { authState } = useAuth();
   const { user } = authState;
-  const [expandedSections, setExpandedSections] = useState<string[]>(['public', 'dashboard']);
-  const isMobile = useIsMobile();
-  
-  // Close sidebar on mobile when navigating to a new page
-  useEffect(() => {
-    if (isMobile) {
-      // Use the onToggle prop to close sidebar if it's open
-      if (isOpen) {
-        onToggle();
-      }
-    }
-  }, [isMobile, isOpen, onToggle]);
+  const location = useLocation();
 
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => 
-      prev.includes(section) 
-        ? prev.filter(s => s !== section)
-        : [...prev, section]
-    );
-  };
-  
-  // Define menu sections based on user role
-  const menuSections: MenuSection[] = [
-    {
-      title: 'Public Website',
-      items: [
-        {
-          to: '/',
-          icon: <Home size={18} />,
-          label: 'Home',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-          end: true
-        },
-        {
-          to: '/how-it-works',
-          icon: <HelpCircle size={18} />,
-          label: 'How It Works',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/become-csp',
-          icon: <UserPlus size={18} />,
-          label: 'Become a CSP',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/customer-corner',
-          icon: <MessageSquare size={18} />,
-          label: 'Customer Corner',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/csr-impact',
-          icon: <HeartHandshake size={18} />,
-          label: 'CSR Impact',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/contact',
-          icon: <Phone size={18} />,
-          label: 'Contact/Helpline',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/verify-csp',
-          icon: <Shield size={18} />,
-          label: 'Verify CSP',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/submit-complaint',
-          icon: <AlertCircle size={18} />,
-          label: 'Submit Complaint',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/track-complaint',
-          icon: <FileSearch size={18} />,
-          label: 'Track Complaint',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer', 'guest'],
-        },
-        {
-          to: '/login',
-          icon: <KeySquare size={18} />,
-          label: 'Login',
-          roles: ['guest'],
-        }
-      ]
-    },
-    {
-      title: 'Dashboard',
-      items: [
-        {
-          to: '/dashboard',
-          icon: <BarChart3 size={18} />,
-          label: 'Dashboard',
-          roles: ['admin', 'csp_agent', 'field_auditor', 'cluster_manager', 'ops_training', 'compliance', 'it_infra', 'hr', 'customer_support', 'bank_officer'],
-        }
-      ]
-    },
-    {
-      title: 'Admin',
-      items: [
-        {
-          to: '/admin/csp-management',
-          icon: <Users size={18} />,
-          label: 'CSP Management',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/audit-assignment',
-          icon: <CheckSquare size={18} />,
-          label: 'Audit Assignment',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/fraud-engine',
-          icon: <AlertTriangle size={18} />,
-          label: 'Fraud Engine',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/audit-logs',
-          icon: <FileText size={18} />,
-          label: 'Audit Trail Logs',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/notification-hub',
-          icon: <Bell size={18} />,
-          label: 'Notification Hub',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/settings',
-          icon: <Settings size={18} />,
-          label: 'System Settings',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/war-mode',
-          icon: <AlertCircle size={18} />,
-          label: 'War Mode Control',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/role-management',
-          icon: <User size={18} />,
-          label: 'Role Management',
-          roles: ['admin'],
-        },
-        {
-          to: '/admin/leaderboard-management',
-          icon: <Award size={18} />,
-          label: 'Leaderboard Management',
-          roles: ['admin'],
-        },
-      ]
-    },
-    {
-      title: 'CSP Agent',
-      items: [
-        {
-          to: '/csp/transactions',
-          icon: <ShieldCheck size={18} />,
-          label: 'Live Transactions',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/check-in',
-          icon: <UserCog size={18} />,
-          label: 'Facial Check-In',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/self-audit',
-          icon: <Clock size={18} />,
-          label: 'Monthly Self-Check',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/fraud-alerts',
-          icon: <AlertTriangle size={18} />,
-          label: 'Fraud Alerts',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/device-status',
-          icon: <Cog size={18} />,
-          label: 'Device Status',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/rewards',
-          icon: <Award size={18} />,
-          label: 'Rewards & Leaderboard',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/gadget-center',
-          icon: <Package size={18} />,
-          label: 'Gadget Center',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/dispute',
-          icon: <MessageSquare size={18} />,
-          label: 'Dispute Center',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/reports',
-          icon: <FileText size={18} />,
-          label: 'Reports',
-          roles: ['csp_agent'],
-        },
-        {
-          to: '/csp/war-mode',
-          icon: <AlertCircle size={18} />,
-          label: 'War Mode Tools',
-          roles: ['csp_agent'],
-        },
-      ]
-    },
-    {
-      title: 'Field Auditor',
-      items: [
-        {
-          to: '/auditor/tasks',
-          icon: <CheckSquare size={18} />,
-          label: 'Assigned Tasks',
-          roles: ['field_auditor'],
-        },
-        {
-          to: '/auditor/live-visit',
-          icon: <Eye size={18} />,
-          label: 'Live Visit Checklist',
-          roles: ['field_auditor'],
-        },
-        {
-          to: '/auditor/audit-form',
-          icon: <FileCheck size={18} />,
-          label: 'Audit Checklist Form',
-          roles: ['field_auditor'],
-        },
-        {
-          to: '/auditor/visit-logs',
-          icon: <MapPin size={18} />,
-          label: 'Visit Logs',
-          roles: ['field_auditor'],
-        },
-        {
-          to: '/auditor/rewards',
-          icon: <Award size={18} />,
-          label: 'Rewards & Leaderboard',
-          roles: ['field_auditor'],
-        },
-        {
-          to: '/auditor/red-zone',
-          icon: <AlertCircle size={18} />,
-          label: 'Red Zone Protocol',
-          roles: ['field_auditor'],
-        },
-      ]
-    },
-    {
-      title: 'Cluster Manager',
-      items: [
-        {
-          to: '/cluster-manager/csp-monitoring',
-          icon: <Users size={18} />,
-          label: 'CSP Monitoring',
-          roles: ['cluster_manager'],
-        },
-        {
-          to: '/cluster-manager/auditor-monitoring',
-          icon: <CheckSquare size={18} />,
-          label: 'Auditor Monitoring',
-          roles: ['cluster_manager'],
-        },
-        {
-          to: '/cluster-manager/checklist-editor',
-          icon: <Wrench size={18} />,
-          label: 'Checklist Editor',
-          roles: ['cluster_manager'],
-        },
-        {
-          to: '/cluster-manager/onboarding',
-          icon: <UserPlus size={18} />,
-          label: 'CSP Onboarding',
-          roles: ['cluster_manager'],
-        },
-        {
-          to: '/cluster-manager/leaderboard',
-          icon: <Award size={18} />,
-          label: 'Leaderboard Moderation',
-          roles: ['cluster_manager'],
-        },
-        {
-          to: '/cluster-manager/compliance',
-          icon: <Shield size={18} />,
-          label: 'Compliance Overview',
-          roles: ['cluster_manager'],
-        },
-      ]
-    },
-    {
-      title: 'Ops/Training',
-      items: [
-        {
-          to: '/ops/kyc-verification',
-          icon: <FileCheck size={18} />,
-          label: 'KYC Verification',
-          roles: ['ops_training'],
-        },
-        {
-          to: '/ops/gadget-management',
-          icon: <Package size={18} />,
-          label: 'Gadget Management',
-          roles: ['ops_training'],
-        },
-        {
-          to: '/ops/training-tasks',
-          icon: <BookOpen size={18} />,
-          label: 'Training Tasks',
-          roles: ['ops_training'],
-        },
-        {
-          to: '/ops/e-learning',
-          icon: <Laptop size={18} />,
-          label: 'E-Learning Management',
-          roles: ['ops_training'],
-        },
-      ]
-    },
-    {
-      title: 'Compliance',
-      items: [
-        {
-          to: '/compliance/audit-results',
-          icon: <FileSearch size={18} />,
-          label: 'Audit Results',
-          roles: ['compliance'],
-        },
-        {
-          to: '/compliance/csp-lockdown',
-          icon: <Shield size={18} />,
-          label: 'CSP Lockdown',
-          roles: ['compliance'],
-        },
-        {
-          to: '/compliance/fraud-resolution',
-          icon: <AlertTriangle size={18} />,
-          label: 'Fraud Resolution',
-          roles: ['compliance'],
-        },
-        {
-          to: '/compliance/csp-scoring',
-          icon: <BarChart3 size={18} />,
-          label: 'CSP Scoring',
-          roles: ['compliance'],
-        },
-        {
-          to: '/compliance/sla-tracker',
-          icon: <Clock size={18} />,
-          label: 'SLA Tracker',
-          roles: ['compliance'],
-        },
-      ]
-    },
-    {
-      title: 'IT/Infra',
-      items: [
-        {
-          to: '/it/device-status',
-          icon: <Laptop size={18} />,
-          label: 'Device Status',
-          roles: ['it_infra'],
-        },
-        {
-          to: '/it/gadget-requests',
-          icon: <Package size={18} />,
-          label: 'Gadget Requests',
-          roles: ['it_infra'],
-        },
-        {
-          to: '/it/app-versions',
-          icon: <Settings size={18} />,
-          label: 'App Versions',
-          roles: ['it_infra'],
-        },
-        {
-          to: '/it/device-health',
-          icon: <Cog size={18} />,
-          label: 'Device Health',
-          roles: ['it_infra'],
-        },
-      ]
-    },
-    {
-      title: 'HR Panel',
-      items: [
-        {
-          to: '/hr/profiles',
-          icon: <Users size={18} />,
-          label: 'Profile Management',
-          roles: ['hr'],
-        },
-        {
-          to: '/hr/leaderboard-history',
-          icon: <Award size={18} />,
-          label: 'Leaderboard History',
-          roles: ['hr'],
-        },
-        {
-          to: '/hr/payroll',
-          icon: <ReceiptText size={18} />,
-          label: 'Payroll Sync',
-          roles: ['hr'],
-        },
-        {
-          to: '/hr/documents',
-          icon: <FileText size={18} />,
-          label: 'Document Upload',
-          roles: ['hr'],
-        },
-      ]
-    },
-    {
-      title: 'Customer Support',
-      items: [
-        {
-          to: '/support/complaints',
-          icon: <MessageSquare size={18} />,
-          label: 'Complaints',
-          roles: ['customer_support'],
-        },
-        {
-          to: '/support/resolution',
-          icon: <CheckSquare size={18} />,
-          label: 'Resolution Center',
-          roles: ['customer_support'],
-        },
-        {
-          to: '/support/army-fastlane',
-          icon: <HeartHandshake size={18} />,
-          label: 'Army Fast-Lane',
-          roles: ['customer_support'],
-        },
-      ]
-    },
-    {
-      title: 'Bank Officer',
-      items: [
-        {
-          to: '/bank/csp-registry',
-          icon: <Users size={18} />,
-          label: 'CSP Registry',
-          roles: ['bank_officer'],
-        },
-        {
-          to: '/bank/fraud-dashboard',
-          icon: <AlertTriangle size={18} />,
-          label: 'Fraud Dashboard',
-          roles: ['bank_officer'],
-        },
-        {
-          to: '/bank/complaints',
-          icon: <MessageSquare size={18} />,
-          label: 'Customer Complaints',
-          roles: ['bank_officer'],
-        },
-        {
-          to: '/bank/document-access',
-          icon: <FileSearch size={18} />,
-          label: 'Document Access',
-          roles: ['bank_officer'],
-        },
-        {
-          to: '/bank/decisions',
-          icon: <CheckSquare size={18} />,
-          label: 'Decision Panel',
-          roles: ['bank_officer'],
-        },
-        {
-          to: '/bank/reports',
-          icon: <Download size={18} />,
-          label: 'Download Reports',
-          roles: ['bank_officer'],
-        },
-      ]
-    },
+  // Navigation items with role-based access control
+  const navItems: NavItem[] = [
+    // Admin items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/admin', roles: ['admin'] },
+    { label: 'CSP Management', icon: <Users className="h-5 w-5" />, path: '/admin/csp-management', roles: ['admin'] },
+    { label: 'Fraud Engine', icon: <Shield className="h-5 w-5" />, path: '/admin/fraud-engine', roles: ['admin'] },
+    { label: 'Audit Logs', icon: <FileText className="h-5 w-5" />, path: '/admin/audit-logs', roles: ['admin'] },
+    { label: 'Audit Assignment', icon: <ClipboardCheck className="h-5 w-5" />, path: '/admin/audit-assignment', roles: ['admin'] },
+    { label: 'Notifications', icon: <Bell className="h-5 w-5" />, path: '/admin/notification-hub', roles: ['admin'] },
+    { label: 'System Settings', icon: <Settings className="h-5 w-5" />, path: '/admin/settings', roles: ['admin'] },
+    { label: 'War Mode Control', icon: <AlertTriangle className="h-5 w-5" />, path: '/admin/war-mode', roles: ['admin'] },
+    
+    // CSP Agent items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/csp', roles: ['csp_agent'] },
+    { label: 'Transactions', icon: <CreditCard className="h-5 w-5" />, path: '/csp/transactions', roles: ['csp_agent'] },
+    { label: 'Check In', icon: <Camera className="h-5 w-5" />, path: '/csp/check-in', roles: ['csp_agent'] },
+    { label: 'Device Status', icon: <Smartphone className="h-5 w-5" />, path: '/csp/device-status', roles: ['csp_agent'] },
+    { label: 'Dispute Center', icon: <MessageSquare className="h-5 w-5" />, path: '/csp/dispute', roles: ['csp_agent'] },
+    { label: 'Reports', icon: <BarChart className="h-5 w-5" />, path: '/csp/reports', roles: ['csp_agent'] },
+    { label: 'War Mode Tools', icon: <AlertTriangle className="h-5 w-5" />, path: '/csp/war-mode', roles: ['csp_agent'] },
+    { label: 'Monthly Audit', icon: <ClipboardCheck className="h-5 w-5" />, path: '/csp/self-audit', roles: ['csp_agent'] },
+    { label: 'Fraud Alerts', icon: <Bell className="h-5 w-5" />, path: '/csp/fraud-alerts', roles: ['csp_agent'] },
+    { label: 'Rewards', icon: <Award className="h-5 w-5" />, path: '/csp/rewards', roles: ['csp_agent'] },
+    { label: 'Gadget Center', icon: <Smartphone className="h-5 w-5" />, path: '/csp/gadget-center', roles: ['csp_agent'] },
+    
+    // Field Auditor items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/auditor', roles: ['field_auditor', 'auditor'] },
+    { label: 'Audit Tasks', icon: <ClipboardCheck className="h-5 w-5" />, path: '/auditor/tasks', roles: ['field_auditor', 'auditor'] },
+    { label: 'Audit Form', icon: <FileText className="h-5 w-5" />, path: '/auditor/audit-form', roles: ['field_auditor', 'auditor'] },
+    { label: 'Visit Logs', icon: <BarChart className="h-5 w-5" />, path: '/auditor/visit-logs', roles: ['field_auditor', 'auditor'] },
+    { label: 'Red Zone Protocol', icon: <AlertTriangle className="h-5 w-5" />, path: '/auditor/red-zone', roles: ['field_auditor', 'auditor'] },
+    { label: 'Live Visit Checklist', icon: <ClipboardCheck className="h-5 w-5" />, path: '/auditor/live-visit', roles: ['field_auditor', 'auditor'] },
+    { label: 'Questionnaires', icon: <BookOpen className="h-5 w-5" />, path: '/auditor/questionnaire', roles: ['field_auditor', 'auditor'] },
+    
+    // FI Agent items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/fi', roles: ['fi_agent'] },
+    { label: 'Customer Accounts', icon: <Users className="h-5 w-5" />, path: '/fi/customer-accounts', roles: ['fi_agent'] },
+    
+    // Cluster Manager items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/cluster-manager', roles: ['cluster_manager'] },
+    { label: 'Checklist Editor', icon: <ClipboardCheck className="h-5 w-5" />, path: '/cluster-manager/checklist-editor', roles: ['cluster_manager'] },
+    { label: 'CSP Management', icon: <Users className="h-5 w-5" />, path: '/cluster-manager/csp-management', roles: ['cluster_manager'] },
+    
+    // Ops Training items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/ops', roles: ['ops_training'] },
+    
+    // Compliance items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/compliance', roles: ['compliance'] },
+    { label: 'Audit Questions', icon: <ClipboardCheck className="h-5 w-5" />, path: '/compliance/audit-questions', roles: ['compliance'] },
+    
+    // IT Infra items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/it', roles: ['it_infra'] },
+    { label: 'Device Inventory', icon: <Smartphone className="h-5 w-5" />, path: '/it/device-inventory', roles: ['it_infra'] },
+    
+    // HR items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/hr', roles: ['hr'] },
+    { label: 'Staff Directory', icon: <Users className="h-5 w-5" />, path: '/hr/staff-directory', roles: ['hr'] },
+    
+    // Customer Support items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/support', roles: ['customer_support'] },
+    
+    // Bank Officer items
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/bank', roles: ['bank_officer'] },
+    { label: 'CSP Registry', icon: <Users className="h-5 w-5" />, path: '/bank/csp-registry', roles: ['bank_officer'] },
+    { label: 'Fraud Dashboard', icon: <Shield className="h-5 w-5" />, path: '/bank/fraud-dashboard', roles: ['bank_officer'] },
+    { label: 'Document Access', icon: <FileText className="h-5 w-5" />, path: '/bank/document-access', roles: ['bank_officer'] },
+    { label: 'Decision Panel', icon: <ClipboardCheck className="h-5 w-5" />, path: '/bank/decisions', roles: ['bank_officer'] },
+    { label: 'Reports', icon: <BarChart className="h-5 w-5" />, path: '/bank/reports', roles: ['bank_officer'] },
+    { label: 'Military Coordination', icon: <Building className="h-5 w-5" />, path: '/bank/military', roles: ['bank_officer'] },
+    { label: 'Customer Complaints', icon: <MessageSquare className="h-5 w-5" />, path: '/bank/complaints', roles: ['bank_officer'] },
   ];
 
-  // Mobile sidebar toggle button (fixed position)
-  const MobileToggle = () => (
-    <button
-      className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-csp-blue text-white shadow-lg md:hidden"
-      onClick={onToggle}
-      aria-label="Toggle sidebar"
-    >
-      {isOpen ? <X size={24} /> : <Menu size={24} />}
-    </button>
+  // Filter navigation items based on user role
+  const filteredNavItems = navItems.filter(item => 
+    user && item.roles.includes(user.role)
   );
 
-  // If mobile and sidebar is closed, only show the toggle button
-  if (isMobile && !isOpen) {
-    return <MobileToggle />;
-  }
-
   return (
-    <>
-      {isMobile && <MobileToggle />}
-      <div 
-        className={cn(
-          "flex h-full w-64 flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white p-4 transition-all duration-300",
-          isMobile && "fixed left-0 top-0 z-40 shadow-lg",
-          isMobile && !isOpen && "transform -translate-x-full"
-        )}
-      >
-        {/* Mobile close button inside sidebar */}
-        {isMobile && (
-          <div className="flex justify-end">
-            <button 
-              onClick={onToggle}
-              className="rounded-full p-1 hover:bg-gray-100"
-            >
-              <X size={20} />
-            </button>
+    <aside
+      className={cn(
+        "fixed inset-y-0 left-0 z-10 flex flex-col border-r bg-white shadow-sm transition-all duration-300",
+        isOpen ? "w-64" : "w-0 md:w-16"
+      )}
+    >
+      <div className="flex h-16 items-center justify-between border-b px-4">
+        {isOpen && (
+          <div className="flex items-center space-x-2">
+            <Landmark className="h-6 w-6 text-primary" />
+            <span className="text-lg font-semibold">BCP Portal</span>
           </div>
         )}
-        
-        {/* Sidebar content */}
-        {menuSections.map((section) => {
-          const filteredItems = section.items.filter(item => 
-            user && isAuthorized(item.roles)
-          );
-          
-          if (filteredItems.length === 0) return null;
-          
-          const isExpanded = expandedSections.includes(section.title.toLowerCase());
-          
-          return (
-            <div key={section.title} className="flex flex-col gap-1">
-              <button
-                className="flex items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider"
-                onClick={() => toggleSection(section.title.toLowerCase())}
-                style={{ color: colorPalette.primaryPurple }}
-              >
-                <span>{section.title}</span>
-                {isExpanded ? (
-                  <ChevronDown size={14} />
-                ) : (
-                  <ChevronRight size={14} />
-                )}
-              </button>
-              
-              {isExpanded && (
-                <div className="ml-2 flex flex-col space-y-1 pl-2">
-                  {filteredItems.map((item) => (
-                    <SidebarItem
-                      key={item.to}
-                      to={item.to}
-                      icon={item.icon}
-                      label={item.label}
-                      end={item.end}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        {/* Mobile overlay backdrop */}
-        {isMobile && isOpen && (
-          <div 
-            className="fixed inset-0 z-30 bg-black bg-opacity-50"
-            onClick={onToggle}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggle}
+          className={cn(!isOpen && "md:ml-auto md:mr-auto")}
+        >
+          <ChevronLeft
+            className={cn(
+              "h-5 w-5 transition-transform",
+              !isOpen && "rotate-180"
+            )}
           />
-        )}
+          <span className="sr-only">Toggle Sidebar</span>
+        </Button>
       </div>
-    </>
+      
+      <div className="flex-1 overflow-y-auto py-4">
+        <nav className="space-y-1 px-2">
+          {filteredNavItems.map((item, index) => (
+            <NavLink
+              key={index}
+              to={item.path}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary text-white"
+                    : "text-gray-700 hover:bg-gray-100",
+                  !isOpen && "justify-center px-2"
+                )
+              }
+            >
+              {item.icon}
+              {isOpen && <span className="ml-3">{item.label}</span>}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+      
+      {isOpen && user && (
+        <div className="border-t p-4">
+          <div className="flex items-center">
+            <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{user.name}</p>
+              <p className="text-xs text-gray-500">{user.role.replace('_', ' ')}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </aside>
   );
 };
 

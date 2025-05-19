@@ -84,6 +84,10 @@ import StaffDirectory from "./pages/hr/StaffDirectory";
 // IT pages
 import DeviceInventory from "./pages/it/DeviceInventory";
 
+// FI Agent pages
+import FiDashboard from "./pages/fi/FiDashboard";
+import CustomerAccounts from "./pages/fi/CustomerAccounts";
+
 const queryClient = new QueryClient();
 
 // Helper function to create routes for each role
@@ -166,6 +170,11 @@ const createRoleRoutes = (role: UserRole, basePath: string) => {
         <Route key="bank-reports" path={`${basePath}/reports`} element={<DownloadReports />} />,
         <Route key="bank-military" path={`${basePath}/military`} element={<MilitaryCoordination />} />,
         <Route key="bank-complaints" path={`${basePath}/complaints`} element={<CustomerComplaintsReview />} />,
+      ];
+    case 'fi_agent':
+      return [
+        <Route key={`${role}-dash`} path={`${basePath}`} element={<FiDashboard />} />,
+        <Route key="fi-customer-accounts" path={`${basePath}/customer-accounts`} element={<CustomerAccounts />} />,
       ];
     default:
       return [];
@@ -252,6 +261,11 @@ const App = () => (
             {/* Bank Officer Routes */}
             <Route path="/bank" element={<AppLayout requiredRoles={['bank_officer']} />}>
               {createRoleRoutes('bank_officer', '/bank')}
+            </Route>
+
+            {/* FI Agent Routes */}
+            <Route path="/fi" element={<AppLayout requiredRoles={['fi_agent']} />}>
+              {createRoleRoutes('fi_agent', '/fi')}
             </Route>
 
             {/* Not Found */}

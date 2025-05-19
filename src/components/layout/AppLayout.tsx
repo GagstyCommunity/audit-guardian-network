@@ -76,7 +76,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       case 'admin': return '/admin';
       case 'csp_agent': return '/csp';
       case 'field_auditor': return '/auditor';
-      case 'auditor': return '/auditor'; // Add this line to handle auditor role
+      case 'auditor': return '/auditor'; 
       case 'cluster_manager': return '/cluster-manager';
       case 'ops_training': return '/ops';
       case 'compliance': return '/compliance';
@@ -84,7 +84,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       case 'hr': return '/hr';
       case 'customer_support': return '/support';
       case 'bank_officer': return '/bank';
-      case 'fi_agent': return '/fi';
+      case 'fi_agent': return '/fi'; // Ensure this route is properly defined
       case 'customer': return '/customer';
       case 'army_welfare_officer': return '/army';
       default: return '/dashboard';
