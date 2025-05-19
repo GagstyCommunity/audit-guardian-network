@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
@@ -202,6 +201,7 @@ const Transactions: React.FC = () => {
         <StatsCard
           title="Success Rate"
           value={`${successRate}%`}
+          icon={BarChart3}
           description={`${successCount} successful / ${failedCount} failed`}
           isLoading={loading}
         />
