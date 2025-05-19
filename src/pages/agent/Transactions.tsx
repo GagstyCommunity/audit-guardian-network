@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { DataTable } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
@@ -11,6 +12,7 @@ import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { format } from 'date-fns';
 import { StatsCard } from '@/components/shared/StatsCard';
 import { useAuth } from '@/contexts/AuthContext';
+import MockData from '@/services/mockDataService';
 
 interface Transaction {
   id: string;
@@ -30,7 +32,18 @@ const Transactions: React.FC = () => {
   const [dateFilter, setDateFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   
-  const { data: transactions, loading } = useSupabaseData<Transaction>('transactions');
+  // Use mock data instead of Supabase data for demo
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay
+    setLoading(true);
+    setTimeout(() => {
+      setTransactions(MockData.transactions(20));
+      setLoading(false);
+    }, 800);
+  }, []);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';

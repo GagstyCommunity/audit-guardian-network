@@ -91,11 +91,142 @@ export const generateMockAudits = (count: number = 5) => {
   });
 };
 
+// Generate mock transactions
+export const generateMockTransactions = (count: number = 20) => {
+  const transactionTypes = ['AEPS_WITHDRAWAL', 'CASH_DEPOSIT', 'BBPS_BILL', 'MICRO_ATM', 'MONEY_TRANSFER'];
+  const statuses = ['success', 'failed', 'pending', 'processing'];
+  const names = [
+    'John Smith', 'Priya Sharma', 'Arun Kumar', 'Neha Patel', 'Raj Malhotra',
+    'Ananya Singh', 'Vikram Khanna', 'Deepa Reddy', 'Sanjay Gupta', 'Kavita Joshi'
+  ];
+  
+  const now = new Date();
+  const thirtyDaysAgo = subDays(now, 30);
+  
+  return Array(count).fill(0).map((_, i) => {
+    const transactionType = transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
+    const amount = Math.round(Math.random() * 10000) + 100;
+    const feeCharged = Math.round(amount * 0.01); // 1% fee
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const customerName = names[Math.floor(Math.random() * names.length)];
+    
+    return {
+      id: generateId(),
+      transaction_type: transactionType,
+      amount: amount,
+      status: status,
+      customer_name: customerName,
+      customer_id: `CUST-${Math.floor(Math.random() * 10000)}`,
+      transaction_date: format(randomDate(thirtyDaysAgo, now), 'yyyy-MM-dd HH:mm:ss'),
+      fee_charged: feeCharged,
+      receipt_id: `RCP-${Math.floor(Math.random() * 100000)}`
+    };
+  });
+};
+
+// Generate mock customer complaints
+export const generateMockComplaints = (count: number = 10) => {
+  const complaintTypes = ['Fee Dispute', 'Service Delay', 'Agent Behavior', 'Wrong Transaction', 'Technical Issue'];
+  const statuses = ['open', 'in-progress', 'resolved', 'closed', 'escalated'];
+  const priorities = ['low', 'medium', 'high'];
+  
+  const now = new Date();
+  const sixMonthsAgo = subDays(now, 180);
+  
+  return Array(count).fill(0).map((_, i) => {
+    return {
+      id: generateId(),
+      customer_name: `Customer ${i+1}`,
+      customer_id: `CUST-${Math.floor(Math.random() * 10000)}`,
+      complaint_type: complaintTypes[Math.floor(Math.random() * complaintTypes.length)],
+      description: `Issue reported regarding ${complaintTypes[Math.floor(Math.random() * complaintTypes.length)].toLowerCase()}`,
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      priority: priorities[Math.floor(Math.random() * priorities.length)],
+      created_at: format(randomDate(sixMonthsAgo, now), 'yyyy-MM-dd'),
+      resolved_at: Math.random() > 0.3 ? format(randomDate(sixMonthsAgo, now), 'yyyy-MM-dd') : null,
+    };
+  });
+};
+
+// Generate mock devices
+export const generateMockDevices = (count: number = 15) => {
+  const deviceTypes = ['Micro-ATM', 'Biometric Scanner', 'Tablet', 'POS Terminal', 'Printer'];
+  const manufacturers = ['Samsung', 'Apple', 'Morpho', 'Verifone', 'Lenovo', 'HP', 'Dell'];
+  const statuses = ['active', 'inactive', 'maintenance', 'repair'];
+  
+  const now = new Date();
+  const twoYearsAgo = subDays(now, 730);
+  const warranty = [12, 24, 36]; // months
+  
+  return Array(count).fill(0).map((_, i) => {
+    const deviceType = deviceTypes[Math.floor(Math.random() * deviceTypes.length)];
+    const manufacturer = manufacturers[Math.floor(Math.random() * manufacturers.length)];
+    const purchaseDate = randomDate(twoYearsAgo, now);
+    const warrantyMonths = warranty[Math.floor(Math.random() * warranty.length)];
+    const warrantyEndDate = new Date(purchaseDate);
+    warrantyEndDate.setMonth(warrantyEndDate.getMonth() + warrantyMonths);
+    
+    return {
+      id: generateId(),
+      device_id: `DEV-${Math.floor(Math.random() * 10000)}`,
+      device_type: deviceType,
+      manufacturer: manufacturer,
+      model: `${manufacturer}-${Math.floor(Math.random() * 1000)}`,
+      serial_number: `SN${Math.floor(Math.random() * 1000000)}`,
+      purchase_date: format(purchaseDate, 'yyyy-MM-dd'),
+      warranty_end: format(warrantyEndDate, 'yyyy-MM-dd'),
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      assigned_to: Math.random() > 0.2 ? `CSP-${Math.floor(Math.random() * 1000)}` : null,
+      last_maintenance: Math.random() > 0.3 ? format(randomDate(purchaseDate, now), 'yyyy-MM-dd') : null,
+    };
+  });
+};
+
+// Generate mock staff
+export const generateMockStaff = (count: number = 12) => {
+  const roles = ['csp_agent', 'field_auditor', 'cluster_manager', 'bank_officer', 'customer_support', 'it_infra'];
+  const departments = ['Operations', 'Customer Service', 'IT', 'Finance', 'HR', 'Audit'];
+  const statuses = ['active', 'on_leave', 'suspended', 'inactive'];
+  
+  const names = [
+    'Rahul Sharma', 'Priya Patel', 'Amit Singh', 'Neha Gupta', 'Rajesh Kumar',
+    'Divya Iyer', 'Sanjay Mehta', 'Ananya Reddy', 'Vikram Malhotra', 'Meera Kapoor',
+    'Arjun Nair', 'Kavita Verma', 'Deepak Joshi', 'Pooja Shah', 'Suresh Rao'
+  ];
+  
+  const now = new Date();
+  const fiveYearsAgo = subDays(now, 1825);
+  
+  return Array(count).fill(0).map((_, i) => {
+    const role = roles[Math.floor(Math.random() * roles.length)];
+    const department = departments[Math.floor(Math.random() * departments.length)];
+    const joinDate = randomDate(fiveYearsAgo, now);
+    
+    return {
+      id: generateId(),
+      employee_id: `EMP-${Math.floor(Math.random() * 10000)}`,
+      name: names[i % names.length],
+      role: role,
+      department: department,
+      email: `${names[i % names.length].toLowerCase().replace(' ', '.')}@example.com`,
+      phone: `+91 ${Math.floor(Math.random() * 1000000000)}`,
+      join_date: format(joinDate, 'yyyy-MM-dd'),
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      reporting_to: Math.random() > 0.3 ? `EMP-${Math.floor(Math.random() * 10000)}` : null,
+      location: ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad'][Math.floor(Math.random() * 5)]
+    };
+  });
+};
+
 // Export mock data factory
 export const MockData = {
   agents: generateMockAgents,
   fraudAlerts: generateMockFraudAlerts,
   audits: generateMockAudits,
+  transactions: generateMockTransactions,
+  complaints: generateMockComplaints,
+  devices: generateMockDevices,
+  staff: generateMockStaff,
 };
 
 export default MockData;

@@ -1,470 +1,268 @@
 
-import React, { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { DataTable } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { useToast } from '@/components/ui/use-toast';
-import { User, UserCog, UserPlus, Search, Mail, Phone, MapPin, Calendar, Settings } from 'lucide-react';
-import { format } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { UserRole } from '@/types/auth.types';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, UserPlus, Mail, Phone, MapPin, UserCog, Users } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { StatsCard } from '@/components/shared/StatsCard';
+import MockData from '@/services/mockDataService';
 
 interface StaffMember {
   id: string;
+  employee_id: string;
   name: string;
-  email: string;
-  role: UserRole;
+  role: string;
   department: string;
-  joinDate: Date;
-  status: 'active' | 'inactive' | 'on_leave';
-  avatar?: string;
+  email: string;
   phone: string;
+  join_date: string;
+  status: string;
+  reporting_to: string | null;
   location: string;
-  manager: string;
-  recentActivity: {
-    action: string;
-    date: Date;
-  }[];
 }
 
-const mockStaffMembers: StaffMember[] = [
-  {
-    id: 'emp-001',
-    name: 'Rahul Khanna',
-    email: 'rahul.khanna@example.com',
-    role: 'admin',
-    department: 'Management',
-    joinDate: new Date('2020-01-15'),
-    status: 'active',
-    avatar: '/assets/avatars/admin.png',
-    phone: '+91 98765 43210',
-    location: 'Delhi, Central Office',
-    manager: 'CEO',
-    recentActivity: [
-      { action: 'Updated system settings', date: new Date('2024-05-15') },
-      { action: 'Created new user account', date: new Date('2024-05-12') },
-      { action: 'Changed access permissions', date: new Date('2024-05-10') }
-    ]
-  },
-  {
-    id: 'emp-002',
-    name: 'Priya Sharma',
-    email: 'priya.sharma@example.com',
-    role: 'hr',
-    department: 'Human Resources',
-    joinDate: new Date('2021-03-10'),
-    status: 'active',
-    avatar: '/assets/avatars/hr.png',
-    phone: '+91 87654 32109',
-    location: 'Delhi, Central Office',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Updated employee benefits', date: new Date('2024-05-16') },
-      { action: 'Processed leave request', date: new Date('2024-05-14') },
-      { action: 'Scheduled training session', date: new Date('2024-05-11') }
-    ]
-  },
-  {
-    id: 'emp-003',
-    name: 'Amit Patel',
-    email: 'amit.patel@example.com',
-    role: 'it_infra',
-    department: 'IT & Infrastructure',
-    joinDate: new Date('2021-06-22'),
-    status: 'active',
-    avatar: '/assets/avatars/it.png',
-    phone: '+91 76543 21098',
-    location: 'Delhi, Tech Center',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Deployed system update', date: new Date('2024-05-17') },
-      { action: 'Resolved network issue', date: new Date('2024-05-15') },
-      { action: 'Added new hardware', date: new Date('2024-05-12') }
-    ]
-  },
-  {
-    id: 'emp-004',
-    name: 'Deepa Reddy',
-    email: 'deepa.reddy@example.com',
-    role: 'compliance',
-    department: 'Compliance',
-    joinDate: new Date('2022-01-05'),
-    status: 'active',
-    avatar: '/assets/avatars/compliance.png',
-    phone: '+91 65432 10987',
-    location: 'Delhi, Central Office',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Updated audit checklist', date: new Date('2024-05-16') },
-      { action: 'Reviewed audit reports', date: new Date('2024-05-13') },
-      { action: 'Created new compliance policy', date: new Date('2024-05-10') }
-    ]
-  },
-  {
-    id: 'emp-005',
-    name: 'Vikram Singh',
-    email: 'vikram.singh@example.com',
-    role: 'field_auditor',
-    department: 'Field Operations',
-    joinDate: new Date('2022-04-18'),
-    status: 'on_leave',
-    avatar: '/assets/avatars/auditor.png',
-    phone: '+91 54321 09876',
-    location: 'North District, Field Office',
-    manager: 'Deepa Reddy',
-    recentActivity: [
-      { action: 'Completed field audit', date: new Date('2024-05-10') },
-      { action: 'Submitted audit report', date: new Date('2024-05-10') },
-      { action: 'Requested annual leave', date: new Date('2024-05-09') }
-    ]
-  },
-  {
-    id: 'emp-006',
-    name: 'Neha Gupta',
-    email: 'neha.gupta@example.com',
-    role: 'cluster_manager',
-    department: 'Field Operations',
-    joinDate: new Date('2022-09-12'),
-    status: 'active',
-    avatar: '/assets/avatars/manager.png',
-    phone: '+91 43210 98765',
-    location: 'East District, Field Office',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Updated cluster report', date: new Date('2024-05-17') },
-      { action: 'Assigned new auditor task', date: new Date('2024-05-15') },
-      { action: 'Reviewed CSP performance', date: new Date('2024-05-14') }
-    ]
-  },
-  {
-    id: 'emp-007',
-    name: 'Rajesh Kumar',
-    email: 'rajesh.kumar@example.com',
-    role: 'customer_support',
-    department: 'Customer Service',
-    joinDate: new Date('2023-02-05'),
-    status: 'active',
-    avatar: '/assets/avatars/support.png',
-    phone: '+91 32109 87654',
-    location: 'Delhi, Customer Center',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Resolved customer complaint', date: new Date('2024-05-17') },
-      { action: 'Updated knowledge base', date: new Date('2024-05-16') },
-      { action: 'Conducted customer survey', date: new Date('2024-05-14') }
-    ]
-  },
-  {
-    id: 'emp-008',
-    name: 'Ananya Iyer',
-    email: 'ananya.iyer@example.com',
-    role: 'ops_training',
-    department: 'Training & Development',
-    joinDate: new Date('2023-05-20'),
-    status: 'active',
-    avatar: '/assets/avatars/training.png',
-    phone: '+91 21098 76543',
-    location: 'Delhi, Training Center',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Conducted training session', date: new Date('2024-05-16') },
-      { action: 'Updated training materials', date: new Date('2024-05-15') },
-      { action: 'Scheduled new workshops', date: new Date('2024-05-13') }
-    ]
-  },
-  {
-    id: 'emp-009',
-    name: 'Sanjay Verma',
-    email: 'sanjay.verma@example.com',
-    role: 'bank_officer',
-    department: 'Banking Operations',
-    joinDate: new Date('2023-08-14'),
-    status: 'inactive',
-    avatar: '/assets/avatars/bank.png',
-    phone: '+91 10987 65432',
-    location: 'South District, Bank Branch',
-    manager: 'Rahul Khanna',
-    recentActivity: [
-      { action: 'Reviewed banking transactions', date: new Date('2024-05-05') },
-      { action: 'Updated banking documentation', date: new Date('2024-05-04') },
-      { action: 'Processed account transfers', date: new Date('2024-05-03') }
-    ]
-  }
-];
-
-const getRoleDisplayName = (role: UserRole): string => {
-  const roleMap: Record<UserRole, string> = {
-    admin: 'Administrator',
-    csp_agent: 'CSP Agent',
-    field_auditor: 'Field Auditor',
-    cluster_manager: 'Cluster Manager',
-    ops_training: 'Operations & Training',
-    compliance: 'Compliance Officer',
-    it_infra: 'IT Infrastructure',
-    hr: 'Human Resources',
-    customer_support: 'Customer Support',
-    bank_officer: 'Bank Officer',
-    fi_agent: 'FI Agent',
-    auditor: 'Auditor',
-    customer: 'Customer',
-    army_welfare_officer: 'Army Welfare Officer',
-    guest: 'Guest'
-  };
-  
-  return roleMap[role] || String(role);
-};
-
 const StaffDirectory: React.FC = () => {
-  const [staff, setStaff] = useState<StaffMember[]>(mockStaffMembers);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
   const { toast } = useToast();
+  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   
-  const filteredStaff = staff.filter(member => 
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getRoleDisplayName(member.role).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setStaff(MockData.staff(20));
+      setLoading(false);
+    }, 800);
+  }, []);
   
-  const handleStatusChange = (id: string, newStatus: 'active' | 'inactive' | 'on_leave') => {
-    const updatedStaff = staff.map(member => 
-      member.id === id ? { ...member, status: newStatus } : member
-    );
+  // Filter staff based on search and filters
+  const filteredStaff = staff.filter(employee => {
+    const matchesSearch = 
+      employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.employee_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.location.toLowerCase().includes(searchTerm.toLowerCase());
     
-    setStaff(updatedStaff);
+    const matchesDepartment = departmentFilter === 'all' || employee.department === departmentFilter;
+    const matchesStatus = statusFilter === 'all' || employee.status === statusFilter;
+    
+    return matchesSearch && matchesDepartment && matchesStatus;
+  });
+  
+  // Calculate statistics
+  const activeStaff = staff.filter(s => s.status === 'active').length;
+  const onLeaveStaff = staff.filter(s => s.status === 'on_leave').length;
+  const suspendedStaff = staff.filter(s => s.status === 'suspended').length;
+  
+  const departments = [...new Set(staff.map(s => s.department))];
+  
+  // Get initials from name for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  // Column definitions for DataTable
+  const columns = [
+    {
+      header: 'Employee',
+      accessorKey: (row: StaffMember) => row.name,
+      cell: (row: StaffMember) => (
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarFallback>{getInitials(row.name)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium">{row.name}</div>
+            <div className="text-sm text-muted-foreground">{row.employee_id}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: 'Role',
+      accessorKey: (row: StaffMember) => row.role,
+      cell: (row: StaffMember) => (
+        <div>
+          <Badge variant="outline" className="capitalize">
+            {row.role.replace('_', ' ')}
+          </Badge>
+        </div>
+      ),
+    },
+    {
+      header: 'Department',
+      accessorKey: (row: StaffMember) => row.department,
+      cell: (row: StaffMember) => (
+        <div>{row.department}</div>
+      ),
+    },
+    {
+      header: 'Contact',
+      accessorKey: (row: StaffMember) => row.email,
+      cell: (row: StaffMember) => (
+        <div>
+          <div className="flex items-center">
+            <Mail className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
+            <span className="text-sm">{row.email}</span>
+          </div>
+          <div className="flex items-center mt-1">
+            <Phone className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
+            <span className="text-sm">{row.phone}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: 'Location',
+      accessorKey: (row: StaffMember) => row.location,
+      cell: (row: StaffMember) => (
+        <div className="flex items-center">
+          <MapPin className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
+          <span>{row.location}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Join Date',
+      accessorKey: (row: StaffMember) => row.join_date,
+      cell: (row: StaffMember) => (
+        <div>{row.join_date}</div>
+      ),
+    },
+    {
+      header: 'Status',
+      accessorKey: (row: StaffMember) => row.status,
+      cell: (row: StaffMember) => (
+        <StatusBadge status={row.status} label={row.status.replace('_', ' ')} />
+      ),
+    },
+    {
+      header: 'Actions',
+      accessorKey: (row: StaffMember) => row.id,
+      cell: (row: StaffMember) => (
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm">
+            <UserCog className="h-3.5 w-3.5 mr-1" /> Profile
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  const handleStatusChange = (userId: string, newStatus: string) => {
+    setStaff(prevStaff => 
+      prevStaff.map(staffMember => 
+        staffMember.id === userId ? { ...staffMember, status: newStatus } : staffMember
+      )
+    );
     
     toast({
       title: "Status Updated",
-      description: `Employee status has been changed to ${newStatus.replace('_', ' ')}`,
+      description: `Employee status has been changed to ${newStatus.replace('_', ' ')}.`,
     });
   };
-  
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active': return <StatusBadge status="active" />;
-      case 'inactive': return <StatusBadge status="inactive" />;
-      case 'on_leave': return <StatusBadge status="on_leave" label="On Leave" />;
-      default: return <StatusBadge status="unknown" />;
-    }
-  };
-  
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Staff Directory</h1>
-      
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Staff Directory</h1>
+        <Button>
+          <UserPlus className="mr-2 h-4 w-4" /> Add Employee
+        </Button>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <StatsCard
+          title="Active Employees"
+          value={activeStaff.toString()}
+          description={`${activeStaff} of ${staff.length} employees`}
+          icon={Users}
+          isLoading={loading}
+        />
+        <StatsCard
+          title="On Leave"
+          value={onLeaveStaff.toString()}
+          description="Currently on leave"
+          icon={Users}
+          isLoading={loading}
+        />
+        <StatsCard
+          title="Suspended Accounts"
+          value={suspendedStaff.toString()}
+          description="Accounts requiring attention"
+          icon={Users}
+          isLoading={loading}
+        />
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>Employee Management</CardTitle>
-          <CardDescription>View and manage staff members across departments</CardDescription>
+          <CardTitle>Employee Registry</CardTitle>
+          <CardDescription>View and manage all staff members</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center mb-6">
-            <div className="relative flex-grow">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div className="relative w-full md:w-auto">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by name, email, role or department..."
-                className="pl-8"
+                placeholder="Search employees..."
+                className="pl-8 w-full md:w-[300px]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button className="shrink-0">
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add Employee
-            </Button>
+            
+            <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+              <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Filter by department" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Departments</SelectItem>
+                  {departments.map((dept) => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="on_leave">On Leave</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Join Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStaff.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
-                      No employees found matching your search
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredStaff.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarImage src={member.avatar} alt={member.name} />
-                            <AvatarFallback>
-                              {member.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{member.name}</div>
-                            <div className="text-xs text-muted-foreground">{member.email}</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getRoleDisplayName(member.role)}</TableCell>
-                      <TableCell>{member.department}</TableCell>
-                      <TableCell>{format(member.joinDate, 'MMM d, yyyy')}</TableCell>
-                      <TableCell>{getStatusBadge(member.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => setSelectedStaff(member)}
-                              >
-                                <User className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[525px]">
-                              {selectedStaff && (
-                                <>
-                                  <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2">
-                                      <Avatar className="h-8 w-8">
-                                        <AvatarImage src={selectedStaff.avatar} alt={selectedStaff.name} />
-                                        <AvatarFallback>
-                                          {selectedStaff.name.split(' ').map(n => n[0]).join('')}
-                                        </AvatarFallback>
-                                      </Avatar>
-                                      {selectedStaff.name}
-                                    </DialogTitle>
-                                    <DialogDescription className="flex items-center">
-                                      <Badge variant="outline">{getRoleDisplayName(selectedStaff.role)}</Badge>
-                                      <span className="mx-2">•</span>
-                                      {selectedStaff.department}
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  
-                                  <Tabs defaultValue="details">
-                                    <TabsList className="grid w-full grid-cols-2">
-                                      <TabsTrigger value="details">Details</TabsTrigger>
-                                      <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="details" className="space-y-4 pt-4">
-                                      <div className="grid gap-3">
-                                        <div className="flex items-center gap-2">
-                                          <Mail className="h-4 w-4 text-muted-foreground" />
-                                          <span>{selectedStaff.email}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <Phone className="h-4 w-4 text-muted-foreground" />
-                                          <span>{selectedStaff.phone}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <MapPin className="h-4 w-4 text-muted-foreground" />
-                                          <span>{selectedStaff.location}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                                          <span>Joined {format(selectedStaff.joinDate, 'MMMM d, yyyy')}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <UserCog className="h-4 w-4 text-muted-foreground" />
-                                          <span>Reports to: {selectedStaff.manager}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <Settings className="h-4 w-4 text-muted-foreground" />
-                                          <span>Status: {selectedStaff.status.replace('_', ' ')}</span>
-                                        </div>
-                                      </div>
-                                    </TabsContent>
-                                    <TabsContent value="activity" className="pt-4">
-                                      <div className="space-y-4">
-                                        {selectedStaff.recentActivity.map((activity, idx) => (
-                                          <div key={idx} className="flex items-start space-x-2">
-                                            <div className="h-2 w-2 mt-2 rounded-full bg-primary" />
-                                            <div>
-                                              <p>{activity.action}</p>
-                                              <p className="text-xs text-muted-foreground">
-                                                {format(activity.date, 'MMM d, yyyy')}
-                                              </p>
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </TabsContent>
-                                  </Tabs>
-                                  
-                                  <DialogFooter>
-                                    <div className="flex space-x-2">
-                                      <Button 
-                                        variant={selectedStaff.status === 'active' ? 'default' : 'outline'} 
-                                        size="sm"
-                                        onClick={() => handleStatusChange(selectedStaff.id, 'active')}
-                                      >
-                                        Set Active
-                                      </Button>
-                                      <Button 
-                                        variant={selectedStaff.status === 'inactive' ? 'destructive' : 'outline'} 
-                                        size="sm"
-                                        onClick={() => handleStatusChange(selectedStaff.id, 'inactive')}
-                                      >
-                                        Set Inactive
-                                      </Button>
-                                      <Button 
-                                        variant={selectedStaff.status === 'on_leave' ? 'secondary' : 'outline'} 
-                                        size="sm"
-                                        onClick={() => handleStatusChange(selectedStaff.id, 'on_leave')}
-                                      >
-                                        Set On Leave
-                                      </Button>
-                                    </div>
-                                  </DialogFooter>
-                                </>
-                              )}
-                            </DialogContent>
-                          </Dialog>
-                          <Button variant="ghost" size="sm">
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable
+            data={filteredStaff}
+            columns={columns}
+            loading={loading}
+            emptyState="No employees found matching your filters"
+          />
         </CardContent>
         <CardFooter className="flex justify-between">
           <div className="text-sm text-muted-foreground">
