@@ -46,7 +46,6 @@ const demoUsers: DemoUser[] = [
   { role: 'hr', email: 'hr@example.com', name: 'HR Team' },
   { role: 'customer_support', email: 'support@example.com', name: 'Customer Support' },
   { role: 'bank_officer', email: 'bank@example.com', name: 'Bank Officer' },
-  { role: 'army_welfare_officer', email: 'armywelfare@example.com', name: 'Army Welfare Officer' },
 ];
 
 const LoginPage: React.FC = () => {
