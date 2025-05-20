@@ -56,6 +56,8 @@ import DecisionPanel from "./pages/bank/DecisionPanel";
 import DownloadReports from "./pages/bank/DownloadReports";
 import MilitaryCoordination from "./pages/bank/MilitaryCoordination";
 import CustomerComplaintsReview from "./pages/bank/CustomerComplaintsReview";
+import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import AccountDetails from "./pages/customer/AccountDetails";
 
 // Customer pages
 import VerifyFee from "./pages/customer/VerifyFee";
