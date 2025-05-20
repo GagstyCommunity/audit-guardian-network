@@ -17,7 +17,7 @@ const customerRoutes: RouteObject[] = [
     element: <CustomerLayout />,
     children: [
       { index: true, element: <CustomerDashboard /> },
-      { index: true, element: <CustomerDashboard /> },
+      { path: 'dashboard', element: <CustomerDashboard /> },
       { path: 'accounts', element: <AccountDetails /> },
       { path: 'transactions', element: <Transactions /> },
       { path: 'verify-fee', element: <VerifyFee /> },

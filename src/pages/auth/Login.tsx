@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
           navigate('/agent/dashboard');
           break;
         case 'customer':
-          navigate('/customer/dashboard');
+          navigate('/customer');
           break;
         case 'auditor':
           navigate('/auditor/dashboard');
