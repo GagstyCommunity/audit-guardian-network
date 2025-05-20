@@ -1,13 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Home, Wallet, FileText, MessageSquare, ShieldCheck } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '../contexts/AuthContext';
+import { Home, Wallet, FileText, MessageSquare, ShieldCheck, Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const CustomerLayout: React.FC = () => {
   const { authState } = useAuth();
   const { user } = authState;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const sidebarItems = [
     {
@@ -43,24 +45,36 @@ const CustomerLayout: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold text-primary">Customer Portal</h1>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Welcome, {user?.name || 'Customer'}</span>
+            <div className="flex items-center gap-4">
+              <span className="hidden md:inline text-sm text-gray-600">Welcome, {user?.name || 'Customer'}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
             </div>
           </div>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="hidden md:block w-64 border-r bg-white p-4 overflow-y-auto">
-          <nav className="space-y-1">
+        <aside className={cn(
+          "fixed inset-y-0 left-0 z-30 w-64 bg-white border-r transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:block",
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        )}>
+          <nav className="p-4 space-y-2">
             {sidebarItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <div className="mr-3 text-gray-500">{item.icon}</div>
-                {item.title}
+                {item.icon}
+                <span className="ml-3">{item.title}</span>
               </a>
             ))}
           </nav>

@@ -42,6 +42,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
     setSidebarOpen(prev => !prev);
   };
 
+  // Close sidebar on route change when on mobile
+  useEffect(() => {
+    if (isMobile && sidebarOpen) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
+
   // Check if user is loading
   if (isLoading) {
     return (
