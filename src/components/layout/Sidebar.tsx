@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -55,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { label: 'Notifications', icon: <Bell className="h-5 w-5" />, path: '/admin/notification-hub', roles: ['admin'] },
     { label: 'System Settings', icon: <Settings className="h-5 w-5" />, path: '/admin/settings', roles: ['admin'] },
     { label: 'War Mode Control', icon: <AlertTriangle className="h-5 w-5" />, path: '/admin/war-mode', roles: ['admin'] },
-    
+
     // CSP Agent items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/csp', roles: ['csp_agent'] },
     { label: 'Transactions', icon: <CreditCard className="h-5 w-5" />, path: '/csp/transactions', roles: ['csp_agent'] },
@@ -68,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { label: 'Fraud Alerts', icon: <Bell className="h-5 w-5" />, path: '/csp/fraud-alerts', roles: ['csp_agent'] },
     { label: 'Rewards', icon: <Award className="h-5 w-5" />, path: '/csp/rewards', roles: ['csp_agent'] },
     { label: 'Gadget Center', icon: <Smartphone className="h-5 w-5" />, path: '/csp/gadget-center', roles: ['csp_agent'] },
-    
+
     // Field Auditor items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/auditor', roles: ['field_auditor', 'auditor'] },
     { label: 'Audit Tasks', icon: <ClipboardCheck className="h-5 w-5" />, path: '/auditor/tasks', roles: ['field_auditor', 'auditor'] },
@@ -77,34 +76,34 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { label: 'Red Zone Protocol', icon: <AlertTriangle className="h-5 w-5" />, path: '/auditor/red-zone', roles: ['field_auditor', 'auditor'] },
     { label: 'Live Visit Checklist', icon: <ClipboardCheck className="h-5 w-5" />, path: '/auditor/live-visit', roles: ['field_auditor', 'auditor'] },
     { label: 'Questionnaires', icon: <BookOpen className="h-5 w-5" />, path: '/auditor/questionnaire', roles: ['field_auditor', 'auditor'] },
-    
+
     // FI Agent items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/fi', roles: ['fi_agent'] },
     { label: 'Customer Accounts', icon: <Users className="h-5 w-5" />, path: '/fi/customer-accounts', roles: ['fi_agent'] },
-    
+
     // Cluster Manager items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/cluster-manager', roles: ['cluster_manager'] },
     { label: 'Checklist Editor', icon: <ClipboardCheck className="h-5 w-5" />, path: '/cluster-manager/checklist-editor', roles: ['cluster_manager'] },
     { label: 'CSP Management', icon: <Users className="h-5 w-5" />, path: '/cluster-manager/csp-management', roles: ['cluster_manager'] },
-    
+
     // Ops Training items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/ops', roles: ['ops_training'] },
-    
+
     // Compliance items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/compliance', roles: ['compliance'] },
     { label: 'Audit Questions', icon: <ClipboardCheck className="h-5 w-5" />, path: '/compliance/audit-questions', roles: ['compliance'] },
-    
+
     // IT Infra items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/it', roles: ['it_infra'] },
     { label: 'Device Inventory', icon: <Smartphone className="h-5 w-5" />, path: '/it/device-inventory', roles: ['it_infra'] },
-    
+
     // HR items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/hr', roles: ['hr'] },
     { label: 'Staff Directory', icon: <Users className="h-5 w-5" />, path: '/hr/staff-directory', roles: ['hr'] },
-    
+
     // Customer Support items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/support', roles: ['customer_support'] },
-    
+
     // Bank Officer items
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/bank', roles: ['bank_officer'] },
     { label: 'CSP Registry', icon: <Users className="h-5 w-5" />, path: '/bank/csp-registry', roles: ['bank_officer'] },
@@ -151,7 +150,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
       </div>
-      
+
       <div className="flex-1 overflow-y-auto py-4">
         <nav className="space-y-1 px-2">
           {filteredNavItems.map((item, index) => (
@@ -174,7 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           ))}
         </nav>
       </div>
-      
+
       {isOpen && user && (
         <div className="border-t p-4">
           <div className="flex items-center">

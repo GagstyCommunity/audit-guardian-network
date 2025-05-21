@@ -111,7 +111,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
       <div className="flex flex-1 flex-col">
         <Header onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 ml-[250px] md:ml-[250px]">
+        <main className={`flex-1 overflow-y-auto p-4 md:p-6 ${sidebarOpen ? 'ml-0 md:ml-[250px]' : 'ml-0'} transition-all duration-300`}>
           <Outlet />
         </main>
         <Toaster />

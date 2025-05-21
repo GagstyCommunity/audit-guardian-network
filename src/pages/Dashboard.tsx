@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -67,7 +66,7 @@ const DashboardSelector: React.FC = () => {
 const ClusterManagerDashboard: React.FC = () => {
   const [cspAgents, setCspAgents] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -75,16 +74,16 @@ const ClusterManagerDashboard: React.FC = () => {
       setLoading(false);
     }, 800);
   }, []);
-  
+
   // Calculate stats
   const activeAgents = cspAgents.filter(agent => agent.status === 'active').length;
   const flaggedAgents = cspAgents.filter(agent => agent.status === 'flagged').length;
-  
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Cluster Manager Dashboard</h2>
-      
-      <div className="grid gap-4 md:grid-cols-3">
+
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">CSP Agent Status</CardTitle>
@@ -109,7 +108,7 @@ const ClusterManagerDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Region Performance</CardTitle>
@@ -143,7 +142,7 @@ const ClusterManagerDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Recent Fraud Alerts</CardTitle>
@@ -175,7 +174,7 @@ const ClusterManagerDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <Alert>
         <Shield className="h-4 w-4" />
         <AlertTitle>Action Required</AlertTitle>
@@ -191,7 +190,7 @@ const OpsTrainingDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Operations & Training Dashboard</h2>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -217,7 +216,7 @@ const OpsTrainingDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Training Programs</CardTitle>
@@ -251,7 +250,7 @@ const OpsTrainingDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">KYC Verification</CardTitle>
@@ -286,7 +285,7 @@ const OpsTrainingDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <Alert>
         <Clock className="h-4 w-4" />
         <AlertTitle>Upcoming Deadline</AlertTitle>
@@ -302,7 +301,7 @@ const ComplianceDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Compliance Dashboard</h2>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -328,7 +327,7 @@ const ComplianceDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Compliance Score</CardTitle>
@@ -365,7 +364,7 @@ const ComplianceDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Fraud Alerts</CardTitle>
@@ -391,7 +390,7 @@ const ComplianceDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>High Risk Alert</AlertTitle>
@@ -407,7 +406,7 @@ const ITInfraDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">IT Infrastructure Dashboard</h2>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -433,7 +432,7 @@ const ITInfraDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">System Health</CardTitle>
@@ -467,7 +466,7 @@ const ITInfraDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Equipment Requests</CardTitle>
@@ -500,7 +499,7 @@ const ITInfraDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Scheduled Maintenance</AlertTitle>
@@ -516,7 +515,7 @@ const HRDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">HR Dashboard</h2>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -542,7 +541,7 @@ const HRDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Recent Onboarding</CardTitle>
@@ -573,7 +572,7 @@ const HRDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Top Performers</CardTitle>
@@ -608,7 +607,7 @@ const HRDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <Alert>
         <MapPin className="h-4 w-4" />
         <AlertTitle>Upcoming Events</AlertTitle>
@@ -624,7 +623,7 @@ const CustomerSupportDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Customer Support Dashboard</h2>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -650,7 +649,7 @@ const CustomerSupportDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Response Time</CardTitle>
@@ -687,7 +686,7 @@ const CustomerSupportDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Common Issues</CardTitle>
@@ -720,7 +719,7 @@ const CustomerSupportDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Priority Alert</AlertTitle>
