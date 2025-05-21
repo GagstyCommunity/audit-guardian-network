@@ -124,8 +124,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-white shadow-sm transition-all duration-300",
-        isOpen ? "w-64" : "w-0 md:w-16",
+        "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-white shadow-sm transition-all duration-300 overflow-y-auto",
+        isOpen ? "w-[250px]" : "w-0 md:w-16",
         !isOpen && "translate-x-0 md:translate-x-0"
       )}
     >

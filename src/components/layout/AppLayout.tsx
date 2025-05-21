@@ -107,15 +107,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ requiredRoles = [] }) => {
   console.log(`Authenticated as ${user?.name} (${user?.role}) at path: ${location.pathname}`);
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
-      <Header onToggleSidebar={toggleSidebar} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+      <div className="flex flex-1 flex-col">
+        <Header onToggleSidebar={toggleSidebar} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 ml-[250px] md:ml-[250px]">
           <Outlet />
         </main>
+        <Toaster />
       </div>
-      <Toaster />
     </div>
   );
 };
